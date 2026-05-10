@@ -5,6 +5,8 @@
 \chapter{Penjadwalan Proses Round-Robin}
 \label{chap:modul-11}
 
+\sloppy
+
 % --- 1. Tujuan dan Output Praktikum ---
 \section{Tujuan dan Output Praktikum}
 
@@ -30,9 +32,9 @@ Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan:
 \section{Dasar Teori}
 
 \subsection{CPU Scheduling}
-\textit{CPU Scheduling} adalah mekanisme fundamental yang digunakan sistem operasi untuk memutuskan \textit{thread} mana dari antrian \textit{ready} yang akan mendapat giliran eksekusi di CPU pada suatu waktu tertentu \cite{Silberschatz2018}. Komponen yang menjalankan keputusan ini disebut \textit{scheduler}. Tanpa \textit{scheduler}, CPU hanya mampu menjalankan satu alur eksekusi tanpa kemampuan beralih ke tugas lain.
+\textit{CPU Scheduling} adalah mekanisme fundamental yang digunakan sistem operasi untuk memutuskan \textit{thread} mana dari antrean \textit{ready} yang akan mendapat giliran eksekusi di CPU pada suatu waktu tertentu \cite{Silberschatz2018}. Komponen yang menjalankan keputusan ini disebut \textit{scheduler}. Tanpa \textit{scheduler}, CPU hanya mampu menjalankan satu alur eksekusi tanpa kemampuan beralih ke tugas lain.
 
-Analoginya seperti sebuah lapangan sepak bola yang hanya memiliki satu bola (CPU). Meski ada 11 pemain (thread) di lapangan, pada satu waktu tertentu hanya satu pemain yang bisa menguasai bola. Pelatih (\textit{scheduler}) bertugas menentukan siapa yang harus menerima bola selanjutnya berdasarkan strategi tertentu.
+Analoginya seperti sebuah lapangan sepak bola yang hanya memiliki satu bola (CPU). Meski ada 11 pemain (\textit{thread}) di lapangan, pada satu waktu tertentu hanya satu pemain yang bisa menguasai bola. Pelatih (\textit{scheduler}) bertugas menentukan siapa yang harus menerima bola selanjutnya berdasarkan strategi tertentu.
 
 Tujuan utama \textit{CPU scheduling} meliputi:
 \begin{itemize}
@@ -41,6 +43,8 @@ Tujuan utama \textit{CPU scheduling} meliputi:
 	\item \textbf{Throughput}: Memaksimalkan jumlah \textit{thread} yang berhasil menyelesaikan pekerjaannya per satuan waktu.
 	\item \textbf{Response Time}: Meminimalkan waktu tunggu antara permintaan \textit{thread} untuk dijalankan dan saat ia benar-benar mendapat giliran CPU.
 \end{itemize}
+
+Untuk mencapai tujuan-tujuan tersebut, sistem operasi menggunakan berbagai algoritma penjadwalan. Salah satu algoritma yang paling mendasar adalah \textit{Round-Robin}, yang akan kita analisis pada modul ini.
 
 \subsection{Algoritma Round-Robin (FIFO)}
 \textit{Round-Robin} (RR) adalah algoritma penjadwalan yang paling sederhana dan paling intuitif. Nama ``Round-Robin'' berasal dari istilah yang digunakan dalam turnamen olahraga, di mana setiap peserta mendapat giliran bermain secara berputar.
@@ -51,16 +55,16 @@ Prinsipnya serupa dengan antrean di loket bank: siapa yang datang lebih dulu, ia
 	\item \textit{Thread} dihentikan paksa oleh \textit{timer interrupt} setelah \textit{time slice} habis (pada sistem \textit{preemptive}).
 \end{enumerate}
 
-Setelah melepas CPU, \textit{thread} tersebut masuk kembali ke belakang antrian, menunggu giliran berikutnya. Proses ini berulang terus sehingga setiap \textit{thread} mendapat giliran secara merata.
+Setelah melepas CPU, \textit{thread} tersebut masuk kembali ke belakang antrean, menunggu giliran berikutnya. Proses ini berulang terus sehingga setiap \textit{thread} mendapat giliran secara merata.
 
 \subsubsection{Implementasi Ready Queue sebagai Circular Array}
-Pada \textit{starter code} OS, antrian \textit{ready} diimplementasikan menggunakan \textit{circular array}:
+Agar prinsip FIFO dapat berjalan efisien, \textit{starter code} OS menggunakan \textit{circular array} sebagai struktur data antrean \textit{ready}. Dengan pendekatan ini, operasi penambahan (\textit{enqueue}) dan pengambilan (\textit{dequeue}) \textit{thread} tidak perlu menggeser seluruh elemen array.
 
-\begin{lstlisting}[language=C, caption={Variabel antrian thread pada thread.c}]
+\begin{lstlisting}[language=C, caption={Variabel antrean thread pada thread.c}]
 static struct thread *ready_queue[MAX_THREADS * 2]; /* 16 slot */
-static uint32_t ready_head  = 0;  /* Indeks depan antrian */
-static uint32_t ready_tail  = 0;  /* Indeks belakang antrian */
-static uint32_t ready_count = 0;  /* Jumlah thread di antrian */
+static uint32_t ready_head  = 0;  /* Indeks depan antrean */
+static uint32_t ready_tail  = 0;  /* Indeks belakang antrean */
+static uint32_t ready_count = 0;  /* Jumlah thread di antrean */
 \end{lstlisting}
 
 Mekanisme \textit{circular array} bekerja sebagai berikut:
@@ -69,7 +73,7 @@ Mekanisme \textit{circular array} bekerja sebagai berikut:
 	\item \textbf{Dequeue} (keluarkan): Thread diambil dari posisi \texttt{ready\_head}, lalu \texttt{ready\_head} digeser maju satu posisi.
 \end{itemize}
 
-Berikut ilustrasi keadaan antrian saat tiga thread (A, B, C) sedang terdaftar dan thread A baru saja dikeluarkan untuk dieksekusi:
+Berikut ilustrasi keadaan antrean saat tiga \textit{thread} (A, B, C) sedang terdaftar dan \textit{thread} A baru saja dikeluarkan untuk dieksekusi:
 
 \begin{lstlisting}[caption={Ilustrasi circular array ready\_queue}]
 Indeks:  [0]   [1]   [2]   [3]   [4] ...
@@ -80,7 +84,7 @@ Isi:       -     B     C     -     -
 \end{lstlisting}
 
 \subsection{Cooperative Scheduling vs Preemptive Scheduling}
-Terdapat dua model utama dalam penjadwalan CPU:
+Mekanisme antrean \textit{Round-Robin} baru akan berfungsi jika ada proses yang mengatur perpindahan giliran CPU. Dalam praktiknya, perpindahan ini dapat terjadi melalui dua model:
 
 \begin{enumerate}
 	\item \textbf{Cooperative Scheduling}: \textit{Thread} secara sadar dan sukarela melepas CPU dengan memanggil fungsi seperti \texttt{thread\_yield()}. Jika sebuah \textit{thread} ``egois'' dan tidak pernah memanggil \texttt{yield()}, ia akan menguasai CPU selamanya, menyebabkan seluruh \textit{thread} lain membeku. Model inilah yang digunakan oleh IF-OS saat ini.
@@ -89,7 +93,7 @@ Terdapat dua model utama dalam penjadwalan CPU:
 \end{enumerate}
 
 \subsection{Field Priority pada Struct Thread}
-Pada \texttt{src/thread.h}, setiap \texttt{struct thread} memiliki field bernama \texttt{priority}:
+IF-OS yang kita gunakan saat ini menerapkan \textit{cooperative scheduling}, namun setiap \textit{thread} sebenarnya sudah memiliki atribut prioritas. Atribut ini didefinisikan pada \texttt{src/thread.h} melalui field \texttt{priority} di dalam \texttt{struct thread}:
 
 \begin{lstlisting}[language=C, caption={Definisi konstanta prioritas pada thread.h}]
 #define PRI_MIN     0    /* Prioritas terendah */
@@ -97,19 +101,19 @@ Pada \texttt{src/thread.h}, setiap \texttt{struct thread} memiliki field bernama
 #define PRI_MAX     63   /* Prioritas tertinggi */
 \end{lstlisting}
 
-Field ini sudah diinisialisasi oleh \texttt{init\_thread()} setiap kali thread dibuat. Namun, fungsi \texttt{next\_thread\_to\_run()} pada implementasi \textit{Round-Robin} \textbf{sama sekali tidak membaca field ini}. Akibatnya, thread berprioritas 10 dan thread berprioritas 50 diperlakukan setara, keduanya mendapat giliran berdasarkan urutan kedatangan saja. Keterbatasan inilah yang akan diatasi pada Modul~12.
+Field ini sudah diinisialisasi oleh \texttt{init\_thread()} setiap kali \textit{thread} dibuat. Namun, fungsi \texttt{next\_thread\_to\_run()} pada implementasi \textit{Round-Robin} \textbf{sama sekali tidak membaca field ini}. Akibatnya, \textit{thread} berprioritas 10 dan \textit{thread} berprioritas 50 diperlakukan setara, keduanya mendapat giliran berdasarkan urutan kedatangan saja. Keterbatasan inilah yang akan diatasi pada Modul~12.
 
 \subsection{Keterbatasan Round-Robin}
-Meskipun \textit{Round-Robin} sangat adil (\textit{fair}), algoritma ini memiliki keterbatasan krusial:
+Meskipun \textit{Round-Robin} memberikan perlakuan yang adil bagi setiap \textit{thread}, pendekatan ini memiliki beberapa keterbatasan:
 \begin{itemize}
 	\item \textbf{Tidak ada diferensiasi kepentingan:} Sebuah \textit{thread} yang menangani tugas kritis (misalnya penanganan \textit{interrupt} atau pemrosesan I/O) mendapat giliran yang sama dengan \textit{thread} yang hanya menjalankan tugas ringan.
-	\item \textbf{Response time tidak optimal:} Thread penting yang baru masuk antrian harus menunggu semua thread di depannya selesai mendapat giliran, meskipun tugasnya lebih mendesak.
+	\item \textbf{Response time tidak optimal:} \textit{Thread} penting yang baru masuk antrean harus menunggu semua \textit{thread} di depannya selesai mendapat giliran, meskipun tugasnya lebih mendesak.
 	\item \textbf{Tidak cocok untuk sistem real-time:} Sistem yang membutuhkan jaminan waktu respon (seperti kendali motor atau perangkat medis) tidak dapat mengandalkan Round-Robin.
 \end{itemize}
 
 Tabel \ref{tab:m11-dasar-teori} merangkum konsep-konsep penting pada modul ini.
 
-\begin{table}[h]
+\begin{table}[htbp]
 	\caption{Tabel Ringkasan Dasar Teori Modul 11}
 	\label{tab:m11-dasar-teori}
 	\centering
@@ -127,7 +131,7 @@ Tabel \ref{tab:m11-dasar-teori} merangkum konsep-konsep penting pada modul ini.
 		Preemptive Scheduling
 		& Model penjadwalan di mana OS memaksa perpindahan \textit{thread} melalui \textit{timer interrupt}. \\ \hline
 		Ready Queue (Circular Array)
-		& Antrian penampung \textit{thread} berstatus \texttt{THREAD\_READY}; dikelola dengan indeks \texttt{ready\_head} dan \texttt{ready\_tail}. \\ \hline
+		& Antrean penampung \textit{thread} berstatus \texttt{THREAD\_READY}; dikelola dengan indeks \texttt{ready\_head} dan \texttt{ready\_tail}. \\ \hline
 	\end{tabulary}
 \end{table}
 
@@ -154,6 +158,8 @@ Tabel \ref{tab:m11-dasar-teori} merangkum konsep-konsep penting pada modul ini.
 % --- 4. Langkah-Langkah Praktikum ---
 \newpage
 \section{Langkah-Langkah Praktikum}
+
+Pada bagian ini, kita akan menguji dan menganalisis perilaku algoritma \textit{Round-Robin} yang sudah diimplementasikan sejak Modul~8. Melalui pengamatan langsung di QEMU, kita akan membuktikan bahwa \textit{scheduler} ini mengabaikan nilai prioritas \textit{thread} dan memperlakukan semua \textit{thread} secara setara.
 
 \subsection{Persiapan Lingkungan}
 \label{sec:m11-persiapan}
@@ -202,8 +208,7 @@ ls src/
 \subsection{Sesi 1: Menjalankan Demo Round-Robin dengan Thread Berprioritas Berbeda}
 \label{sec:m11-sesi-1}
 
-Pada sesi ini, praktikan akan mengompilasi dan menjalankan OS dengan \textit{flag} \texttt{PRIORITY\_SCHEDULING}.
-\textbf{Tidak perlu mengubah kode apa pun}, cukup amati keluaran (\textit{output}) yang muncul di layar QEMU.
+Pada sesi ini, kita akan menjalankan sistem operasi dengan skenario demo yang membuat tiga \textit{thread} berprioritas berbeda. Dari pengamatan ini, kita bisa melihat langsung bahwa \textit{scheduler} \textit{Round-Robin} tetap memperlakukan ketiga \textit{thread} tersebut secara setara meskipun prioritasnya berbeda. \textbf{Tidak perlu mengubah kode apa pun}, cukup amati keluaran (\textit{output}) yang muncul di layar QEMU.
 
 \textbf{Penting:} Flag \texttt{PRIORITY\_SCHEDULING} pada Makefile \textbf{hanya mengubah skenario demo} di \texttt{kernel.c}, yaitu membuat tiga \textit{thread} dengan prioritas berbeda (\texttt{Low}, \texttt{Med}, \texttt{High}). Flag ini \textbf{tidak} mengubah algoritma \textit{scheduler}. Algoritma \textit{scheduler} tetap ditentukan oleh implementasi fungsi \texttt{next\_thread\_to\_run()} di \texttt{thread.c}, yang saat ini masih berupa \textit{Round-Robin} (FIFO).
 
@@ -215,7 +220,7 @@ thread_create("Med",  PRI_DEFAULT, thread_func_generic, &args_med);
 thread_create("High", 50,          thread_func_generic, &args_high);
 \end{lstlisting}
 
-Konfigurasi argumen masing-masing thread:
+Konfigurasi argumen masing-masing \textit{thread}:
 \begin{itemize}
 	\item \texttt{Low}: prioritas 10, warna abu-abu (\texttt{VGA\_COLOR\_DARK\_GRAY}), berjalan tanpa batas (\texttt{max\_ticks = 0}).
 	\item \texttt{Med}: prioritas 31 (\texttt{PRI\_DEFAULT}), warna cyan terang (\texttt{VGA\_COLOR\_BRIGHT\_CYAN}), berjalan tanpa batas.
@@ -230,16 +235,16 @@ Konfigurasi argumen masing-masing thread:
 
 	      \textit{Catatan: Jika muncul error \texttt{permission denied}, jalankan \texttt{chmod +x run-docker.sh} terlebih dahulu. Jika Docker belum berjalan, pastikan Docker Desktop atau Docker Engine sudah aktif.}
 
-	\item \textit{Compile} OS dengan \textit{flag} \texttt{PRIORITY\_SCHEDULING} diaktifkan.
-	      \begin{lstlisting}[language=bash, caption={Compile dengan flag PRIORITY\_SCHEDULING}]
+	\item \textit{Kompilasi} OS dengan \textit{flag} \texttt{PRIORITY\_SCHEDULING} diaktifkan.
+	      \begin{lstlisting}[language=bash, caption={Kompilasi dengan flag PRIORITY\_SCHEDULING}]
 make clean
 make DEMO=-DPRIORITY_SCHEDULING
     \end{lstlisting}
 
 	      \textbf{PERHATIAN (Kesalahan Umum):}
 	      \begin{itemize}
-	      	\item Perintah \texttt{make clean} \textbf{wajib} dijalankan terlebih dahulu untuk menghapus hasil kompilasi sebelumnya. Jika langkah ini dilewati, kode lama yang sudah di-compile mungkin masih digunakan dan flag \texttt{PRIORITY\_SCHEDULING} tidak akan terdeteksi.
-	      	\item Jika muncul error \texttt{thread.c: undefined reference to `allocate\_tid'}, berarti file \texttt{thread.c} yang digunakan tidak sesuai atau belum lengkap. Pastikan file mengandung baris \texttt{\#include "thread.h"} di awal, dan ulangi langkah Persiapan.
+		      \item Perintah \texttt{make clean} \textbf{wajib} dijalankan terlebih dahulu untuk menghapus hasil kompilasi sebelumnya. Jika langkah ini dilewati, kode lama yang sudah dikompilasi mungkin masih digunakan dan flag \texttt{PRIORITY\_SCHEDULING} tidak akan terdeteksi.
+		      \item Jika muncul error \texttt{thread.c: undefined reference to `allocate\_tid'}, berarti file \texttt{thread.c} yang digunakan tidak sesuai atau belum lengkap. Pastikan file mengandung baris \texttt{\#include "thread.h"} di awal, dan ulangi langkah Persiapan.
 	      \end{itemize}
 
 	\item Jalankan kernel di QEMU dan amati keluaran (\textit{output}) di layar.
@@ -290,21 +295,22 @@ Demo Minggu 6: Priority Scheduling
 		      \begin{tabulary}{\textwidth}{|c|l|c|L|}
 			      \hline
 			      \textbf{Giliran} & \textbf{Thread} & \textbf{Prioritas} & \textbf{Keterangan} \\ \hline
-			      1 & Low  & 10 & Masuk antrian pertama kali \\ \hline
-			      2 & Med  & 31 & Masuk antrian kedua        \\ \hline
-			      3 & High & 50 & Masuk antrian ketiga        \\ \hline
-			      4 & Low  & 10 & Kembali ke depan antrian (FIFO berputar) \\ \hline
+			      1 & Low  & 10 & Masuk antrean pertama kali \\ \hline
+			      2 & Med  & 31 & Masuk antrean kedua        \\ \hline
+			      3 & High & 50 & Masuk antrean ketiga        \\ \hline
+			      4 & Low  & 10 & Kembali ke depan antrean (FIFO berputar) \\ \hline
 			      5 & Med  & 31 & \ldots{} dan seterusnya   \\ \hline
 		      \end{tabulary}
 	      \end{table}
 
-	      Urutan di atas membuktikan bahwa \textit{scheduler} \textit{Round-Robin} sepenuhnya mengabaikan kolom ``Prioritas''. Thread Low (10) selalu dieksekusi sebelum High (50) karena Low masuk antrian lebih dulu.
+	      Urutan di atas membuktikan bahwa \textit{scheduler} \textit{Round-Robin} sepenuhnya mengabaikan kolom ``Prioritas''. Thread Low (10) selalu dieksekusi sebelum High (50) karena Low masuk antrean lebih dulu.
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 	\centering
-	% TODO: ganti dengan screenshot hasil QEMU Round-Robin
-	\includegraphics[width=0.85\textwidth]{Figure/11/1.png}
+	% TODO: tambahkan screenshot hasil QEMU Round-Robin ke Figure/11/1.png
+	% \includegraphics[width=0.85\textwidth]{Figure/11/1.png}
+	\fbox{\parbox{0.85\textwidth}{\centering\vspace{2cm}Screenshot QEMU akan ditampilkan di sini\vspace{2cm}}}
 	\caption{Keluaran QEMU menunjukkan ketiga thread berjalan bergantian secara merata meskipun prioritasnya berbeda, yang membuktikan bahwa Round-Robin mengabaikan nilai prioritas. Keterbatasan ini akan diatasi pada Modul~12.}
 	\label{fig:m11-sesi1}
 \end{figure}
