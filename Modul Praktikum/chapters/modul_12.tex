@@ -5,59 +5,145 @@
 \chapter{Penjadwalan Proses Berbasis Prioritas}
 \label{chap:modul-12}
 
+\sloppy
+
 % --- 1. Tujuan dan Output Praktikum ---
 \section{Tujuan dan Output Praktikum}
 
 \subsection{Tujuan Praktikum}
 Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
 \begin{enumerate}
-    \item Tujuan praktikum pertama.
-    \item Tujuan praktikum kedua.
-    \item Tujuan praktikum ketiga.
-    \item Tujuan praktikum keempat.
+	\item Memahami konsep \textit{Priority Scheduling} sebagai evolusi dari algoritma \textit{Round-Robin} yang telah dianalisis pada Modul~11.
+	\item Memodifikasi fungsi \texttt{next\_thread\_to\_run()} di \texttt{src/thread.c} agar memilih \textit{thread} dengan nilai prioritas tertinggi dari \textit{ready queue}, menggantikan logika FIFO yang ada.
+	\item Memverifikasi bahwa \textit{thread} berprioritas tinggi dieksekusi lebih dahulu melalui pengujian di QEMU dengan \textit{flag} \texttt{PRIORITY\_SCHEDULING}.
+	\item Menganalisis fenomena \textit{starvation} yang muncul sebagai konsekuensi dari \textit{Priority Scheduling} murni dan memahami solusi konseptualnya.
 \end{enumerate}
 
 \subsection{Output Praktikum}
 Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan:
 \begin{itemize}
-    \item Output pertama yang diharapkan.
-    \item Output kedua yang diharapkan.
-    \item Output ketiga yang diharapkan.
+	\item Implementasi fungsional \textit{Priority Scheduling} pada fungsi \texttt{next\_thread\_to\_run()} yang terbukti mampu memilih \textit{thread} berprioritas tertinggi dari \textit{ready queue}.
+	\item Tangkapan layar (\textit{screenshot}) keluaran QEMU yang menunjukkan \textit{thread} \texttt{High} (prioritas 50) dieksekusi terlebih dahulu selama 5 tick, kemudian \texttt{Med} (prioritas 31) mendominasi CPU sepenuhnya, sementara \texttt{Low} (prioritas 10) mengalami \textit{starvation} dan tidak pernah mendapat giliran (selama \texttt{Med} masih ada di antrean).
+	\item Laporan perbandingan yang menjabarkan perbedaan perilaku \textit{Round-Robin} (Modul~11) vs \textit{Priority Scheduling} (Modul~12) berdasarkan keluaran QEMU.
 \end{itemize}
 
 % --- 2. Dasar Teori ---
 \newpage
 \section{Dasar Teori}
 
-\subsection{Sub-Teori Pertama}
-\lipsum[2]
+Pada Modul~11, kita sudah melihat bahwa algoritma \textit{Round-Robin} memperlakukan semua \textit{thread} secara setara tanpa membedakan tingkat kepentingan masing-masing tugas. Modul ini akan membahas \textit{Priority Scheduling} sebagai alternatif yang mengatasi keterbatasan tersebut.
 
-\subsection{Sub-Teori Kedua}
-\lipsum[3]
+\subsection{Priority Scheduling}
+\textit{Priority Scheduling} adalah algoritma penjadwalan CPU yang menetapkan nilai prioritas numerik pada setiap \textit{thread} \cite{Silberschatz2018}. Ketika \textit{scheduler} harus memilih \textit{thread} berikutnya untuk dieksekusi, ia akan \textbf{memindai seluruh} \textit{ready queue} dan memilih \textit{thread} dengan nilai prioritas tertinggi, bukan yang paling depan di antrean.
 
-\subsubsection{Sub-Sub-Teori A}
-\lipsum[4]
+Analoginya seperti ruang gawat darurat di rumah sakit. Meskipun ada antrean pasien yang datang lebih dulu, pasien dengan kondisi paling kritis (prioritas tertinggi) akan ditangani terlebih dahulu, tanpa memperhatikan urutan kedatangan.
 
-\subsubsection{Sub-Sub-Teori B}
-\lipsum[5]
+Pada \textit{starter code} OS, prioritas didefinisikan melalui tiga konstanta di \texttt{src/thread.h}:
 
-\subsection{Sub-Teori Ketiga}
-\lipsum[6]
+\begin{lstlisting}[language=C, caption={Konstanta prioritas pada thread.h}]
+#define PRI_MIN     0    /* Prioritas terendah */
+#define PRI_DEFAULT 31   /* Prioritas default */
+#define PRI_MAX     63   /* Prioritas tertinggi */
+\end{lstlisting}
 
-Tabel \ref{tab:m12-dasar-teori} merangkum hal-hal penting terkait teori di atas.
+Field \texttt{priority} pada \texttt{struct thread} sudah tersedia dan diinisialisasi sejak Modul~8, namun belum pernah dimanfaatkan oleh \textit{scheduler}. Pada modul ini, field tersebut akan menjadi kunci utama dalam menentukan giliran CPU.
 
-\begin{table}[h]
-\caption{Tabel Ringkasan Dasar Teori}
-\label{tab:m12-dasar-teori}
-\centering
-\begin{tabulary}{\textwidth}{|L|L|}
-\hline
-\textbf{Konsep} & \textbf{Penjelasan Singkat} \\ \hline
-Konsep A        & \textit{TODO: isi penjelasan} \\ \hline
-Konsep B        & \textit{TODO: isi penjelasan} \\ \hline
-Konsep C        & \textit{TODO: isi penjelasan} \\ \hline
-Konsep D        & \textit{TODO: isi penjelasan} \\ \hline
-\end{tabulary}
+\subsection{Perbedaan Mendasar dengan Round-Robin}
+Perbedaan utama antara \textit{Priority Scheduling} dan \textit{Round-Robin} terletak pada cara \texttt{next\_thread\_to\_run()} memilih \textit{thread} berikutnya dari antrean. Pada \textit{Round-Robin}, pemilihan dilakukan secara berurutan berdasarkan kedatangan. Pada \textit{Priority Scheduling}, pemilihan dilakukan berdasarkan nilai prioritas tertinggi.
+
+\begin{itemize}
+	\item \textbf{Round-Robin}: Selalu mengambil \textit{thread} dari posisi depan antrean (\texttt{ready\_head}). Tidak ada pemindaian, tidak ada perbandingan. Kompleksitas: $O(1)$.
+	\item \textbf{Priority Scheduling}: Memindai \textit{seluruh} isi antrean untuk menemukan \textit{thread} dengan \texttt{priority} tertinggi, mengeluarkannya dari posisinya (bukan dari depan), lalu menggeser elemen sisanya. Kompleksitas: $O(n)$, di mana $n$ adalah jumlah \textit{thread} di antrean.
+\end{itemize}
+
+Berikut ilustrasi perbedaan keduanya pada antrean yang sama:
+
+\begin{lstlisting}[caption={Ilustrasi perbedaan pemilihan thread}]
+Ready Queue: [Low(10)] -> [Med(31)] -> [High(50)]
+
+Round-Robin memilih : Low  (posisi depan, FIFO)
+Priority memilih    : High (nilai priority tertinggi)
+\end{lstlisting}
+
+\begin{table}[htbp]
+	\centering
+	\caption{Perbandingan Round-Robin dan Priority Scheduling}
+	\label{tab:m12-perbandingan}
+	\begin{tabulary}{\textwidth}{|L|L|L|}
+		\hline
+		\textbf{Aspek} & \textbf{Round-Robin (Modul 11)} & \textbf{Priority Scheduling (Modul 12)} \\ \hline
+		Prinsip pemilihan
+		& FIFO: \textit{thread} yang lebih dulu masuk antrean, lebih dulu dieksekusi.
+		& \textit{Thread} dengan nilai prioritas tertinggi selalu dipilih terlebih dahulu. \\ \hline
+		Fairness
+		& Tinggi: setiap \textit{thread} mendapat porsi CPU yang setara.
+		& Rendah: \textit{thread} berprioritas rendah bisa tidak pernah mendapat CPU. \\ \hline
+		Responsiveness
+		& Rendah: \textit{thread} penting harus menunggu giliran yang sama.
+		& Tinggi: \textit{thread} kritis langsung dieksekusi. \\ \hline
+		Kompleksitas
+		& $O(1)$: langsung ambil dari depan antrean.
+		& $O(n)$: harus memindai seluruh antrean. \\ \hline
+		Risiko utama
+		& Tidak ada \textit{starvation}, tetapi tugas penting mungkin lambat ditangani.
+		& \textit{Starvation} pada \textit{thread} berprioritas rendah. \\ \hline
+	\end{tabulary}
+\end{table}
+
+\subsection{Starvation (Kelaparan)}
+Perbedaan cara distribusi CPU antara kedua algoritma ini menimbulkan konsekuensi yang cukup signifikan. Pada \textit{Round-Robin}, setiap \textit{thread} mendapat giliran secara merata. Pada \textit{Priority Scheduling}, muncul risiko yang tidak ada pada \textit{Round-Robin}, yaitu \textit{starvation}.
+
+\textit{Starvation} adalah kondisi di mana sebuah \textit{thread} berprioritas rendah \textbf{tidak pernah} mendapat giliran CPU karena selalu ada \textit{thread} berprioritas lebih tinggi yang siap dieksekusi di \textit{ready queue}.
+
+Pada skenario praktikum ini, \textit{starvation} total tidak terjadi karena \texttt{High} memiliki batas \texttt{max\_ticks = 5} dan akan \textit{exit} setelah 5 iterasi, sehingga akhirnya \texttt{Med} dan \texttt{Low} mendapat giliran. Namun, jika \texttt{High} berjalan tanpa batas, \texttt{Low} akan mengalami \textit{starvation}.
+
+Berikut skenario terjadinya \textit{starvation} langkah demi langkah:
+
+\begin{table}[htbp]
+	\centering
+	\caption{Skenario starvation pada Priority Scheduling}
+	\begin{tabulary}{\textwidth}{|c|l|L|}
+		\hline
+		\textbf{Langkah} & \textbf{Thread Aktif} & \textbf{Yang Terjadi} \\ \hline
+		1 & High (pri=50) & Dipilih scheduler, berjalan, memanggil \texttt{yield()} \\ \hline
+		2 & --- & Scheduler memindai antrean: Low(10), Med(31), High(50) \\ \hline
+		3 & High (pri=50) & Dipilih lagi karena prioritas tertinggi \\ \hline
+		4 & --- & High terus dipilih berulang kali \\ \hline
+		$\infty$ & Low (pri=10) & \textbf{Tidak pernah mendapat giliran} = \textit{starvation} \\ \hline
+	\end{tabulary}
+\end{table}
+
+\subsection{Solusi: Aging}
+Salah satu cara untuk mengatasi \textit{starvation} adalah dengan teknik \textit{aging}. Ide dasarnya cukup sederhana: setiap kali \textit{scheduler} dipanggil, prioritas semua \textit{thread} yang \textbf{tidak} terpilih (masih menunggu di antrean) dinaikkan sebesar 1. Dengan demikian, \textit{thread} berprioritas rendah yang sudah lama menunggu pada akhirnya akan memiliki prioritas yang cukup tinggi untuk mendapat giliran.
+
+\begin{lstlisting}[caption={Pseudocode aging}]
+function next_thread_to_run():
+    chosen = thread dengan prioritas tertinggi
+
+    for setiap thread LAIN di ready_queue:
+        thread.priority += 1  /* Naikkan 1 setiap kali tidak terpilih */
+
+    return chosen
+\end{lstlisting}
+
+Tabel \ref{tab:m12-dasar-teori} merangkum konsep-konsep penting pada modul ini.
+
+\begin{table}[htbp]
+	\caption{Tabel Ringkasan Dasar Teori Modul 12}
+	\label{tab:m12-dasar-teori}
+	\centering
+	\begin{tabulary}{\textwidth}{|L|L|}
+		\hline
+		\textbf{Konsep} & \textbf{Penjelasan Singkat} \\ \hline
+		Priority Scheduling
+		& Algoritma penjadwalan yang memilih \textit{thread} berdasarkan nilai prioritas tertinggi di \textit{ready queue}. \\ \hline
+		Starvation
+		& Kondisi di mana \textit{thread} berprioritas rendah tidak pernah mendapat giliran CPU karena selalu dikalahkan oleh \textit{thread} berprioritas lebih tinggi. \\ \hline
+		Aging
+		& Teknik pencegahan \textit{starvation} dengan menaikkan prioritas \textit{thread} yang sudah lama menunggu. \\ \hline
+		Pemindaian Antrean
+		& Proses iterasi seluruh isi \textit{ready queue} untuk menemukan \textit{thread} dengan \texttt{priority} tertinggi; kompleksitas $O(n)$. \\ \hline
+	\end{tabulary}
 \end{table}
 
 % --- 3. Alat dan Bahan ---
@@ -67,78 +153,199 @@ Konsep D        & \textit{TODO: isi penjelasan} \\ \hline
 
 \subsection{Perangkat Keras}
 \begin{itemize}
-    \item Spesifikasi perangkat keras pertama.
-    \item Spesifikasi perangkat keras kedua.
+	\item PC atau Laptop dengan arsitektur prosesor basis \textit{host} x86/x64 yang mendukung kelanjutan kompilasi emulator.
+	\item Memori minimal 4GB RAM ruang eksekusi.
 \end{itemize}
 
-\subsection{Perangkat Lunak}
+\subsection{Perangkat Lunak (Bahan Praktikum)}
 \begin{itemize}
-    \item Perangkat lunak pertama beserta versinya.
-    \item Perangkat lunak kedua beserta versinya.
-    \item Perangkat lunak ketiga beserta versinya.
+	\item OS \textit{Host} utama (Windows dengan WSL/GitBash, Linux, atau macOS).
+	\item Text Editor (misalnya Visual Studio Code) untuk menyunting berkas kode bahasa C dan \textit{Assembly}.
+	\item Instalasi Docker Engine (\texttt{docker.io}) untuk menyalakan lingkungan isolasi kompilasi.
+	\item Emulator Hardware x86: \texttt{qemu-system-x86} (atau instalasi QEMU setara) yang akan mengeksekusi binari hasil OS.
+	\item Direktori \textit{Starter Code} OS 32-bit dengan implementasi Modul~8 yang sudah berfungsi (berisi direktori \texttt{src} dengan kerangka lengkap \texttt{kernel.c}, \texttt{thread.h}, \texttt{thread.c}, \texttt{switch.asm}, dsb).
 \end{itemize}
 
 % --- 4. Langkah-Langkah Praktikum ---
 \newpage
 \section{Langkah-Langkah Praktikum}
 
+Pada bagian ini, kita akan memodifikasi fungsi \texttt{next\_thread\_to\_run()} agar menggunakan \textit{Priority Scheduling} alih-alih \textit{Round-Robin}. Setelah modifikasi selesai, kita akan menjalankan sistem di QEMU dan mengamati langsung fenomena \textit{starvation} yang terjadi.
+
 \subsection{Persiapan Lingkungan}
 \label{sec:m12-persiapan}
-\lipsum[7]
+
+Pada praktikum ini, Anda akan memodifikasi fungsi \texttt{next\_thread\_to\_run()} di \texttt{src/thread.c} agar mengimplementasikan \textit{Priority Scheduling}. File yang dimodifikasi hanya \texttt{src/thread.c}. Pastikan Anda menggunakan direktori kerja yang sama dengan Modul~11.
+
+\textit{Catatan: Pastikan Anda masih berada di dalam lingkungan Docker yang digunakan pada Modul 11, atau jalankan kembali \texttt{./run-docker.sh} jika sudah keluar.}
 
 \begin{enumerate}
-    \item Langkah persiapan pertama.
-    \item Langkah persiapan kedua.
-    \begin{lstlisting}[language=bash, caption={Perintah verifikasi lingkungan}]
-# TODO: ganti dengan perintah sesungguhnya
-echo "Lingkungan siap"
+	\item Buka terminal, pastikan Anda berada di dalam direktori \textit{source code} OS (direktori kerja yang sama dengan Modul~11).
+	\item Bersihkan hasil \textit{build} sebelumnya agar kompilasi berikutnya menggunakan kode terbaru yang akan Anda tulis.
+	      \begin{lstlisting}[language=bash, caption={Bersihkan build sebelumnya}]
+make clean
     \end{lstlisting}
 \end{enumerate}
 
-\subsection{Sesi 1: Nama Sesi Pertama}
+% -----------------------------------------------------------------
+\subsection{Sesi 1: Analisis Kode Scheduler Round-Robin yang Akan Dimodifikasi}
 \label{sec:m12-sesi-1}
-\lipsum[8]
+
+Sebelum menulis implementasi \textit{Priority Scheduling}, kita perlu memahami terlebih dahulu bagaimana kode \textit{Round-Robin} yang ada saat ini bekerja. Dengan memahami struktur yang sudah ada, kita bisa mengidentifikasi bagian mana yang perlu diubah. Buka file \texttt{src/thread.c} menggunakan teks editor Anda dan cari fungsi \texttt{next\_thread\_to\_run()}.
 
 \begin{enumerate}
-    \item Langkah pertama sesi ini.
-    \begin{lstlisting}[language=bash, caption={Perintah sesi pertama}]
-# TODO: ganti dengan perintah sesungguhnya
-perintah --opsi argumen
+	\item Perhatikan implementasi \textit{Round-Robin} (FIFO) yang Anda tulis pada Modul~8:
+	      \begin{lstlisting}[language=C, caption={Implementasi Round-Robin saat ini di next\_thread\_to\_run()}]
+struct thread *next_thread_to_run(void) {
+    if (ready_count == 0)
+        return initial_thread;
+    struct thread *next = ready_queue[ready_head];
+    ready_head = (ready_head + 1) % (MAX_THREADS * 2);
+    ready_count--;
+    return next;
+}
     \end{lstlisting}
 
-    \item Langkah kedua sesi ini.
-    \begin{lstlisting}[language=bash, caption={Perintah lanjutan}]
-# TODO: ganti dengan perintah sesungguhnya
-perintah_lanjutan
+	\item Identifikasi kelemahan kode di atas: baris \texttt{ready\_queue[ready\_head]} selalu mengambil \textit{thread} dari posisi depan antrean tanpa memeriksa field \texttt{priority}. Akibatnya, \textit{thread} berprioritas tinggi diperlakukan sama dengan \textit{thread} berprioritas rendah, sebagaimana telah dibuktikan pada keluaran QEMU di Modul~11.
+
+	\item Perhatikan juga variabel-variabel antrean yang akan Anda gunakan kembali:
+	      \begin{lstlisting}[language=C, caption={Variabel antrean thread di thread.c (sudah disediakan)}]
+static struct thread *ready_queue[MAX_THREADS * 2];
+static uint32_t ready_head  = 0;
+static uint32_t ready_tail  = 0;
+static uint32_t ready_count = 0;
     \end{lstlisting}
+	      Antrean ini berupa \textit{circular array} dengan kapasitas \texttt{MAX\_THREADS * 2} (16 slot). Variabel \texttt{ready\_head} menunjuk ke elemen terdepan, \texttt{ready\_tail} menunjuk ke posisi kosong berikutnya, dan \texttt{ready\_count} menghitung jumlah \textit{thread} yang saat ini ada di antrean.
 \end{enumerate}
 
-\begin{figure}[h]
-    \centering
-    % TODO: ganti dengan screenshot hasil praktikum
-    \includegraphics[width=0.75\textwidth]{Figure/ifitera-header.png}
-    \caption{Hasil Sesi 1 --- TODO: ganti caption}
-    \label{fig:m12-sesi1}
-\end{figure}
-
-\subsection{Sesi 2: Nama Sesi Kedua}
+% -----------------------------------------------------------------
+\subsection{Sesi 2: Implementasi Priority Scheduling}
 \label{sec:m12-sesi-2}
-\lipsum[9]
+
+Setelah melihat kelemahan pada implementasi \textit{Round-Robin}, kita bisa mulai memodifikasi fungsi \texttt{next\_thread\_to\_run()}. Logika baru yang akan kita tulis terdiri dari tiga tahap: pertama, memindai antrean untuk menemukan \textit{thread} berprioritas tertinggi. Kedua, mengambil \textit{thread} tersebut dari antrean. Ketiga, menggeser elemen antrean untuk menutup celah yang ditinggalkan. Masih di dalam file \texttt{src/thread.c}:
 
 \begin{enumerate}
-    \item Langkah pertama sesi kedua.
-    \item Langkah kedua sesi kedua.
-    \begin{lstlisting}[language=bash, caption={Perintah sesi kedua}]
-# TODO: ganti dengan perintah sesungguhnya
-perintah_sesi_dua
+	\item \textbf{Implementasi \texttt{next\_thread\_to\_run()} (Priority Scheduling)} \\
+	      Ganti seluruh isi fungsi \texttt{next\_thread\_to\_run()} dengan kode berikut. Logikanya terdiri dari tiga tahap yang ditandai dengan komentar bernomor:
+
+	      \begin{lstlisting}[language=C, caption={Kode implementasi Priority Scheduling pada next\_thread\_to\_run()}]
+struct thread *next_thread_to_run(void) {
+    if (ready_count == 0)
+        return initial_thread;
+
+    /* 1. Cari indeks thread dengan prioritas tertinggi */
+    uint32_t best_idx  = ready_head;
+    int      best_prio = ready_queue[ready_head]->priority;
+
+    for (uint32_t i = 1; i < ready_count; i++) {
+        uint32_t idx = (ready_head + i) % (MAX_THREADS * 2);
+        if (ready_queue[idx]->priority > best_prio) {
+            best_prio = ready_queue[idx]->priority;
+            best_idx  = idx;
+        }
+    }
+
+    /* 2. Ambil thread terpilih dari antrean */
+    struct thread *next = ready_queue[best_idx];
+
+    /* 3. Geser elemen setelah posisi terpilih untuk menutup celah */
+    uint32_t i = best_idx;
+    while (1) {
+        uint32_t next_i = (i + 1) % (MAX_THREADS * 2);
+        if (next_i == ready_tail) break;
+        ready_queue[i] = ready_queue[next_i];
+        i = next_i;
+    }
+    ready_tail  = (ready_tail == 0)
+                      ? (MAX_THREADS * 2 - 1)
+                      : ready_tail - 1;
+    ready_count--;
+
+    return next;
+}
     \end{lstlisting}
-    \item Langkah ketiga sesi kedua.
+
+	      \begin{figure}[htbp]
+		      \centering
+		      \includegraphics[width=0.85\textwidth]{Figure/12/2.png}
+		      \caption{Implementasi fungsi \texttt{next\_thread\_to\_run()} untuk Priority Scheduling.}
+		      \label{fig:m12-sesi2}
+	      \end{figure}
+
+	      Penjelasan setiap tahap:
+	      \begin{itemize}
+		      \item \textbf{Tahap 1 (Pemindaian):} Loop menelusuri seluruh isi antrean mulai dari \texttt{ready\_head}. Untuk setiap elemen, bandingkan \texttt{priority}-nya dengan \texttt{best\_prio}. Jika lebih tinggi, catat indeks aktualnya di \texttt{best\_idx} dan perbarui \texttt{best\_prio}. Setelah loop selesai, \texttt{best\_idx} menunjuk ke posisi thread dengan prioritas tertinggi.
+
+		      \item \textbf{Tahap 2 (Pengambilan):} Simpan pointer thread terpilih dari \texttt{ready\_queue[best\_idx]} ke variabel \texttt{next}.
+
+		      \item \textbf{Tahap 3 (Penggeseran):} Karena thread yang diambil mungkin bukan dari posisi depan antrean (berbeda dengan FIFO), elemen-elemen setelahnya harus digeser maju satu posisi untuk menutup celah. Ini dilakukan oleh loop \texttt{while} yang bergerak dari \texttt{best\_idx} hingga \texttt{ready\_tail}. Terakhir, mundurkan \texttt{ready\_tail} dan kurangi \texttt{ready\_count}.
+	      \end{itemize}
+
+	      \textit{Catatan penting: Jika muncul error \texttt{implicit declaration of function} saat kompilasi, pastikan Anda tidak menghapus baris \texttt{\#include "thread.h"} dan \texttt{\#include "types.h"} di awal file.}
+
+	      \textit{Jika muncul warning \texttt{comparison of unsigned expression < 0 is always true}, pastikan tipe data \texttt{ready\_count} adalah \texttt{uint32\_t} (bukan \texttt{int}). Cek deklarasi variabel di bagian atas file \texttt{thread.c}.}
+
+	\item \textbf{Simpan} file \texttt{thread.c}. Saat ini \textit{scheduler} Anda sudah berubah dari \textit{Round-Robin} menjadi \textit{Priority Scheduling}.
 \end{enumerate}
 
-\begin{figure}[h]
-    \centering
-    % TODO: ganti dengan screenshot hasil praktikum
-    \includegraphics[width=0.75\textwidth]{Figure/ifitera-header.png}
-    \caption{Hasil Sesi 2 --- TODO: ganti caption}
-    \label{fig:m12-sesi2}
+% -----------------------------------------------------------------
+\subsection{Sesi 3: Kompilasi dan Verifikasi Sistem OS}
+\label{sec:m12-sesi-3}
+
+Setelah kode \textit{Priority Scheduling} selesai ditulis, kita bisa mengompilasi dan menjalankan sistem untuk melihat hasilnya. Pada sesi ini, kita akan membandingkan keluaran QEMU sebelum dan sesudah modifikasi.
+
+\begin{enumerate}
+	\item Lakukan kompilasi sistem operasi Anda dengan \textit{flag} \texttt{PRIORITY\_SCHEDULING}.
+	      \begin{lstlisting}[language=bash, caption={Kompilasi dan jalankan dengan Priority Scheduling}]
+# Pastikan telah menjalankan make clean sebelumnya
+make DEMO=-DPRIORITY_SCHEDULING
+make run
+    \end{lstlisting}
+
+	      \textit{Jika muncul error \texttt{linker error: undefined reference to `next\_thread\_to\_run'}, berarti ada kesalahan sintaks pada fungsi Anda (misalnya kurung kurawal tidak tertutup). Periksa kembali kode pada Sesi 2.}
+
+	      \textit{Jika kompilasi berhasil tetapi QEMU langsung menampilkan \texttt{KERNEL PANIC}, kemungkinan \texttt{next\_thread\_to\_run()} mengembalikan \texttt{NULL}. Pastikan blok \texttt{if (ready\_count == 0) return initial\_thread;} masih ada di awal fungsi.}
+
+	\item \textbf{Verifikasi Hasil:} Amati keluaran (\textit{output}) di layar QEMU. Bandingkan dengan perilaku sebelum modifikasi.
+	      \begin{itemize}
+		      \item \textbf{Sebelumnya (Modul 11):} Ketiga \textit{thread} bergantian secara merata tanpa memperhatikan prioritas (\textit{Round-Robin}).
+		      \item \textbf{Sekarang (Modul 12):} Thread \texttt{High} (prioritas 50) mendominasi CPU selama 5 tick penuh. Setelah \texttt{High} \textit{exit}, \texttt{Med} (prioritas 31) mendominasi CPU sepenuhnya, sementara \texttt{Low} (prioritas 10) \textbf{tidak pernah mendapat giliran} (\textit{starvation}).
+	      \end{itemize}
+
+	      \begin{lstlisting}[caption={Ekspektasi keluaran QEMU setelah Priority Scheduling}]
+===================================
+  IF-OS  |  Praktikum Sistem Operasi
+===================================
+
+Inisialisasi sistem thread...
+Demo Minggu 6: Priority Scheduling
+(Jika masih Round-Robin, next_thread_to_run() belum dimodifikasi)
+(High=50 jalan 5 tick lalu exit, Med=31 mengambil alih, Low=10 terakhir)
+
+[High] tick 0
+[High] tick 1
+[High] tick 2
+[High] tick 3
+[High] tick 4
+[High] selesai (5 tick)
+[Med] tick 0
+[Med] tick 1
+[Med] tick 2
+[Med] tick 3
+...            <- Med berjalan terus, Low tidak pernah muncul
+    \end{lstlisting}
+
+	      Meskipun \textit{thread} \texttt{Low} memanggil \texttt{yield()} dan masuk kembali ke antrean, \textit{scheduler} selalu memilih \textit{thread} berprioritas tertinggi. Karena \texttt{Med} (31) selalu memiliki prioritas lebih tinggi daripada \texttt{Low} (10), \texttt{Med} akan terus dipilih dan \texttt{Low} \textbf{tidak pernah mendapat giliran sama sekali}.
+
+	      Fenomena ini adalah contoh nyata dari \textbf{\textit{starvation}} yang telah dibahas pada Dasar Teori. Pada skenario ini, \texttt{High} tidak menyebabkan \textit{starvation} permanen karena memiliki batas \texttt{max\_ticks = 5}, tetapi \texttt{Med} (yang berjalan tanpa batas) secara efektif membuat \texttt{Low} kelaparan selamanya. Untuk mengatasi ini, diperlukan mekanisme \textit{aging} sebagaimana dijelaskan pada Dasar Teori, namun implementasinya berada di luar cakupan modul ini.
+
+	\item Ambil tangkapan layar (\textit{screenshot}) hasil eksekusi untuk membuktikan bahwa implementasi \textit{Priority Scheduling} telah berjalan sesuai ekspektasi.
+\end{enumerate}
+
+\begin{figure}[htbp]
+	\centering
+	% TODO: tambahkan screenshot hasil QEMU Priority Scheduling ke Figure/12/1.png
+	\includegraphics[width=0.85\textwidth]{Figure/12/1.png}
+	\caption{Keluaran (\textit{output}) QEMU setelah implementasi Priority Scheduling. Thread High (prioritas 50) dieksekusi pertama kali selama 5 tick penuh, kemudian Med (prioritas 31) mendominasi CPU sepenuhnya sementara Low (prioritas 10) mengalami \textit{starvation}.}
+	\label{fig:m12-sesi3}
 \end{figure}

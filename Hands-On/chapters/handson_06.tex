@@ -1,39 +1,299 @@
 % ============================================================
-%  Hands-On 6 — Otomatisasi Proses Build dengan Makefile
+%  Hands-On 6 — Penjadwalan Proses: Round-Robin & Priority
 % ============================================================
 
-\chapter{Penjadwalan Proses Berbasis Prioritas}
+\chapter{Penjadwalan Proses: Round-Robin dan Priority}
 \label{chap:handson-06}
 
-% --- 1. Tugas ---
-\section{Tugas}
+\section{Tujuan}
 
-Jawablah pertanyaan-pertanyaan berikut berdasarkan hasil praktikum Anda.
-Sertakan bukti berupa \textit{screenshot} atau penggalan keluaran terminal
-yang relevan pada setiap jawaban.
+Kerjakan tugas-tugas berikut secara berurutan mengikuti alur sesi pada Modul 11 dan Modul 12. Sertakan bukti berupa tangkapan layar (\textit{screenshot}) QEMU atau penggalan kode yang relevan pada setiap langkah yang diminta.
+
+% ============================================================
+\section{Sesi 1 — Mengamati Perilaku Round-Robin}
+% ============================================================
+
+\subsection{Persiapan dan Kompilasi}
+
+Pastikan implementasi Minggu 4 sudah berfungsi, lalu kompilasi dengan \textit{flag} \texttt{PRIORITY\_SCHEDULING} diaktifkan.
 
 \begin{enumerate}
-    \item \textbf{[Topik Pertanyaan 1]}\\
-    \textit{TODO: ganti dengan pertanyaan sesungguhnya.}\\[0.3cm]
-    \textbf{Jawaban:}\\
-    \textit{[Isi jawaban di sini]}
 
-    \item \textbf{[Topik Pertanyaan 2]}\\
-    \textit{TODO: ganti dengan pertanyaan sesungguhnya.}
-    \begin{enumerate}
-        \item[(a)] Sub-pertanyaan a.\\
-        \textbf{Jawaban:} \textit{[Isi jawaban di sini]}
-        \item[(b)] Sub-pertanyaan b.\\
-        \textbf{Jawaban:} \textit{[Isi jawaban di sini]}
-    \end{enumerate}
+	\item Pastikan Anda sudah berada di dalam lingkungan Docker (jalankan \texttt{./run-docker.sh} jika belum) sebelum menjalankan perintah berikut.
 
-    \item \textbf{[Topik Pertanyaan 3]}\\
-    \textit{TODO: ganti dengan pertanyaan sesungguhnya.}\\[0.3cm]
-    \textbf{Jawaban:}\\
-    \textit{[Isi jawaban di sini]}
+	\item Jalankan perintah berikut untuk mengompilasi dan menjalankan kernel:
+	      \begin{lstlisting}[language=bash, caption={Compile dan jalankan demo Priority Scheduling}]
+make clean
+make DEMO=-DPRIORITY_SCHEDULING
+make run
+    \end{lstlisting}
 
-    \item \textbf{[Eksplorasi Mandiri]}\\
-    \textit{TODO: ganti dengan pertanyaan eksplorasi sesungguhnya.}\\[0.3cm]
-    \textbf{Jawaban:}\\
-    \textit{[Isi jawaban di sini]}
+	      Amati keluaran (\textit{output}) yang muncul selama $\pm$15 detik, lalu ambil tangkapan layar (\textit{screenshot}) pada layar QEMU. Tempel hasil tangkapan layar di sini:
+
+	      \begin{figure}[H]
+		      \centering
+		      \fbox{\begin{minipage}{0.92\linewidth}
+				      \centering\vspace{2.5cm}
+				      \textit{[Tempel screenshot layar QEMU di sini]}
+				      \vspace{2.5cm}
+			      \end{minipage}}
+		      \caption{Tampilan QEMU dengan scheduler Round-Robin (ketiga thread bergantian tanpa memperhatikan prioritas).}
+	      \end{figure}
+
+	\item Perhatikan tiga thread yang dibuat di \texttt{kernel.c} dan isilah tabel berikut berdasarkan kode sumber.
+
+	      \begin{table}[htbp]
+		      \centering
+		      \caption{Konfigurasi thread pada mode \texttt{PRIORITY\_SCHEDULING}}
+		      \begin{tabulary}{\textwidth}{|l|c|l|c|}
+			      \hline
+			      \textbf{Nama} & \textbf{Prioritas} & \textbf{Warna VGA} & \textbf{max\_ticks} \\ \hline
+			      Low  & 10 & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      Med  & \textit{[Isi]} & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      High & \textit{[Isi]} & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+		      \end{tabulary}
+	      \end{table}
+
+\end{enumerate}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Analisis Perilaku Round-Robin}
+
+\begin{enumerate}
+
+	\item Perhatikan urutan keluaran thread di layar QEMU. Isilah tabel berikut untuk mengidentifikasi pola urutan eksekusi.
+
+	      \begin{table}[htbp]
+		      \centering
+		      \caption{Urutan eksekusi thread yang diamati pada Round-Robin}
+		      \begin{tabulary}{\textwidth}{|c|l|c|L|}
+			      \hline
+			      \textbf{Giliran} & \textbf{Thread} & \textbf{Prioritas} & \textbf{Mengapa dipilih?} \\ \hline
+			      1 & \textit{[Isi]} & \textit{[Isi]} & \textit{[Isi: karena masuk antrian pertama]} \\ \hline
+			      2 & \textit{[Isi]} & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      3 & \textit{[Isi]} & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      4 & \textit{[Isi]} & \textit{[Isi]} & \textit{[Isi: kembali ke depan (FIFO berputar)]} \\ \hline
+		      \end{tabulary}
+	      \end{table}
+
+	\item Apakah thread \texttt{High} (prioritas 50) mendapat perlakuan istimewa dari \textit{scheduler}? Jelaskan mengapa atau mengapa tidak, berdasarkan kode \texttt{next\_thread\_to\_run()} versi Round-Robin.\\[0.2cm]
+	      \textbf{Jawaban:}\\
+	      \textit{[Isi jawaban di sini]}
+
+	\item Setelah \texttt{High} selesai (tick ke-5), apa yang terjadi pada urutan eksekusi antara \texttt{Low} dan \texttt{Med}? Apakah keduanya tetap bergantian secara adil?\\[0.2cm]
+	      \textbf{Jawaban:}\\
+	      \textit{[Isi jawaban di sini]}
+
+\end{enumerate}
+
+% ============================================================
+\section{Sesi 2 — Implementasi Priority Scheduling}
+% ============================================================
+
+\subsection{Analisis Kode yang Akan Dirombak}
+
+\begin{enumerate}
+
+	\item Buka file \texttt{src/thread.c} dan perhatikan fungsi \texttt{next\_thread\_to\_run()} versi FIFO. Identifikasi baris kode mana yang menyebabkan scheduler mengabaikan prioritas.
+
+	      \begin{table}[htbp]
+		      \centering
+		      \caption{Identifikasi kelemahan kode Round-Robin}
+		      \begin{tabulary}{\textwidth}{|L|L|}
+			      \hline
+			      \textbf{Pertanyaan} & \textbf{Jawaban} \\ \hline
+			      Baris kode mana yang mengambil thread dari antrian?
+			      & \textit{[Isi: tuliskan baris kode tersebut]} \\ \hline
+			      Apakah baris tersebut memeriksa field \texttt{priority}?
+			      & \textit{[Isi]} \\ \hline
+			      Apa yang menentukan urutan pemilihan thread?
+			      & \textit{[Isi: urutan masuk antrian / nilai prioritas / ...]} \\ \hline
+		      \end{tabulary}
+	      \end{table}
+
+\end{enumerate}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Implementasi \texttt{next\_thread\_to\_run()} (Priority)}
+
+\begin{enumerate}
+
+	\item Salin kode \texttt{next\_thread\_to\_run()} versi Priority Scheduling yang telah Anda tulis:
+
+	      \begin{lstlisting}[language=C, caption={Implementasi \texttt{next\_thread\_to\_run()} versi Priority oleh mahasiswa}]
+struct thread *next_thread_to_run(void) {
+
+    /* Tulis implementasi Anda di sini */
+
+}
+    \end{lstlisting}
+
+	\item Jelaskan secara singkat logika tiga tahap pada implementasi Anda:
+	      \begin{enumerate}
+		      \item[(a)] Tahap 1 (Pemindaian): Bagaimana Anda menelusuri isi antrian untuk mencari thread dengan prioritas tertinggi?\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+
+		      \item[(b)] Tahap 2 (Pengambilan): Mengapa Anda perlu menyimpan pointer ke thread terpilih sebelum melakukan penggeseran?\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+
+		      \item[(c)] Tahap 3 (Penggeseran): Mengapa perlu menggeser elemen setelah posisi terpilih? Apa yang terjadi jika langkah ini dilewati?\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+	      \end{enumerate}
+
+	\item Jika dua thread memiliki prioritas yang sama (misalnya keduanya \texttt{PRI\_DEFAULT}), thread mana yang akan dipilih oleh implementasi Anda? Apakah ini perilaku yang diinginkan? (Kaitkan jawaban Anda dengan hasil eksperimen pada Eksplorasi 2)\\[0.2cm]
+	      \textbf{Jawaban:}\\
+	      \textit{[Isi jawaban di sini]}
+
+\end{enumerate}
+
+% ============================================================
+\section{Sesi 3 — Kompilasi dan Verifikasi}
+% ============================================================
+
+\begin{enumerate}
+
+	\item \textit{Compile} ulang dan jalankan kernel setelah implementasi Priority Scheduling:
+	      \begin{lstlisting}[language=bash, caption={Compile dan jalankan dengan Priority Scheduling}]
+make clean
+make DEMO=-DPRIORITY_SCHEDULING
+make run
+    \end{lstlisting}
+
+	      Sertakan tangkapan layar (\textit{screenshot}) keluaran (\textit{output}) QEMU \textbf{sebelum} dan \textbf{sesudah} modifikasi scheduler secara berdampingan.
+
+	      \begin{figure}[H]
+		      \centering
+		      \begin{minipage}[t]{0.48\textwidth}
+			      \centering
+			      \fbox{\begin{minipage}{0.95\linewidth}
+					      \centering\vspace{2cm}
+					      \textit{[Tempel screenshot layar di sini]}
+					      \vspace{2cm}
+				      \end{minipage}}
+			      \caption*{(a) Sebelum modifikasi (Round-Robin)}
+		      \end{minipage}%
+		      \hfill
+		      \begin{minipage}[t]{0.48\textwidth}
+			      \centering
+			      \fbox{\begin{minipage}{0.95\linewidth}
+					      \centering\vspace{2cm}
+					      \textit{[Tempel screenshot layar di sini]}
+					      \vspace{2cm}
+				      \end{minipage}}
+			      \caption*{(b) Setelah modifikasi (Priority Scheduling)}
+		      \end{minipage}
+		      \caption{Perbandingan tampilan QEMU sebelum dan sesudah implementasi Priority Scheduling.}
+		      \label{fig:h06-compare}
+	      \end{figure}
+
+	\item Verifikasi urutan keluaran (\textit{output}) yang benar. Isilah tabel berikut berdasarkan pengamatan Anda.
+
+	      \begin{table}[htbp]
+		      \centering
+		      \caption{Perbandingan urutan eksekusi sebelum dan sesudah modifikasi}
+		      \begin{tabulary}{\textwidth}{|c|L|L|}
+			      \hline
+			      \textbf{Giliran ke-} & \textbf{Round-Robin (Modul 11)} & \textbf{Priority Scheduling (Modul 12)} \\ \hline
+			      1 & \textit{[Isi: Low / Med / High?]} & \textit{[Isi]} \\ \hline
+			      2 & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      3 & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      4 & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      6 (setelah High exit) & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+		      \end{tabulary}
+	      \end{table}
+
+	\item Apakah thread \texttt{Low} (prioritas 10) mendapat giliran setelah thread \texttt{High} selesai? Jelaskan mengapa hal tersebut terjadi (kaitkan dengan mekanisme pemindaian antrian pada skenario ini).\\[0.2cm]
+	      \textbf{Jawaban:}\\
+	      \textit{[Isi jawaban di sini]}
+
+	\item Isilah tabel ringkasan perbandingan kedua algoritma berdasarkan hasil praktikum yang telah dilakukan.
+
+	      \begin{table}[htbp]
+		      \centering
+		      \caption{Ringkasan perbandingan Round-Robin vs Priority Scheduling}
+		      \begin{tabulary}{\textwidth}{|l|L|L|}
+			      \hline
+			      \textbf{Aspek} & \textbf{Round-Robin} & \textbf{Priority Scheduling} \\ \hline
+			      Prinsip pemilihan
+			      & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      Fairness
+			      & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      Apakah High didahulukan?
+			      & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+			      Risiko utama
+			      & \textit{[Isi]} & \textit{[Isi]} \\ \hline
+		      \end{tabulary}
+	      \end{table}
+
+\end{enumerate}
+
+% ============================================================
+\section{Eksplorasi Mandiri}
+% ============================================================
+
+\begin{enumerate}
+
+	% ── Eksplorasi 1 ─────────────────────────────────────────
+	\item \textbf{Eksperimen mengubah nilai prioritas.}\\
+	      Pada \texttt{kernel.c}, tukar nilai prioritas thread \texttt{Low} dan \texttt{High} sehingga \texttt{Low} mendapat prioritas 50 dan \texttt{High} mendapat prioritas 10. \textit{Compile} ulang dan jalankan.
+
+	      \begin{lstlisting}[language=bash, caption={Kompilasi untuk eksperimen tukar prioritas}]
+make clean && make DEMO=-DPRIORITY_SCHEDULING && make run
+    \end{lstlisting}
+
+	      \begin{enumerate}
+		      \item[(a)] Sertakan tangkapan layar (\textit{screenshot}) hasil QEMU.
+
+		            \begin{figure}[H]
+			            \centering
+			            \fbox{\begin{minipage}{0.92\linewidth}
+					            \centering\vspace{2.5cm}
+					            \textit{[Tempel screenshot layar di sini]}
+					            \vspace{2.5cm}
+				            \end{minipage}}
+			            \caption{Tampilan QEMU setelah prioritas Low dan High ditukar.}
+		            \end{figure}
+
+		      \item[(b)] Thread mana yang sekarang dieksekusi terlebih dahulu? Apakah hasilnya sesuai dengan ekspektasi?\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+	      \end{enumerate}
+
+	      % Eksplorasi 2 
+	\item \textbf{Simulasi Round-Robin dengan Prioritas.}\\
+	      Ubah parameter prioritas pada ketiga \textit{thread} di \texttt{kernel.c} agar semuanya memiliki prioritas yang \textbf{sama persis} (misalnya ketiganya diberi \texttt{PRI\_DEFAULT} atau 31). Pastikan \texttt{max\_ticks} untuk \texttt{High} tetap 5. \textit{Compile} ulang dan jalankan.
+
+	      \begin{enumerate}
+		      \item[(a)] Sertakan tangkapan layar (\textit{screenshot}) hasil QEMU.
+
+		            \begin{figure}[H]
+			            \centering
+			            \fbox{\begin{minipage}{0.92\linewidth}
+					            \centering\vspace{2.5cm}
+					            \textit{[Tempel screenshot layar di sini]}
+					            \vspace{2.5cm}
+				            \end{minipage}}
+			            \caption{Tampilan QEMU saat ketiga thread memiliki prioritas yang sama.}
+		            \end{figure}
+
+		      \item[(b)] Bagaimana perilaku \textit{scheduler} saat semua antrian memiliki nilai prioritas yang setara? Apakah kembali bertindak seperti \textit{Round-Robin} (FIFO)? Jelaskan alasannya berdasarkan implementasi kode Anda.\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+	      \end{enumerate}
+
+	      % ── Eksplorasi 3 ─────────────────────────────────────────
+	\item \textbf{Refleksi: Solusi untuk starvation.}\\
+	      Berdasarkan konsep \textit{aging} yang telah dipelajari pada dasar teori Modul~12:
+	      \begin{enumerate}
+		      \item[(a)] Jelaskan bagaimana teknik \textit{aging} dapat mengatasi \textit{starvation} yang Anda amati pada eksperimen di atas.\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+		      \item[(b)] Komponen apa yang perlu ditambahkan pada \texttt{next\_thread\_to\_run()} agar \textit{aging} dapat bekerja? Jelaskan secara konseptual (tidak perlu menulis kode).\\[0.2cm]
+		            \textbf{Jawaban:}\\
+		            \textit{[Isi jawaban di sini]}
+	      \end{enumerate}
+
 \end{enumerate}
