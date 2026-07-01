@@ -34,6 +34,20 @@ Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan luaran berupa:
 
 Secara analogi, bayangkan sistem operasi Linux Anda sebagai seorang koki. Mengetik perintah satu per satu di terminal ibarat Anda berdiri di dapur dan mendiktekan instruksi memasak kalimat demi kalimat. Hal ini efisien untuk masakan sederhana, namun melelahkan untuk tugas rumit. Sebaliknya, \textit{Shell Scripting} ibarat Anda menyusun "Resep Masakan" utuh di secarik kertas, di mana instruksi seperti menyalin berkas (\texttt{cp}) atau memindahkan direktori (\texttt{mv}) dapat dijalankan secara mandiri dan konsisten dari awal hingga selesai \cite{das2012unix}.
 
+\subsection{Alur Eksekusi Skrip Bash}
+Ketika sebuah skrip dijalankan, \textit{shell} akan membaca isi file secara berurutan dari atas ke bawah, lalu mengeksekusi setiap instruksi sesuai sintaks Bash. Ada dua cara umum menjalankannya. Pertama, dengan \texttt{bash skrip.sh}; pada cara ini, program \texttt{bash} dipanggil secara eksplisit untuk membaca file. Kedua, dengan \texttt{./skrip.sh}; pada cara ini, sistem akan lebih dulu memeriksa apakah file memiliki hak eksekusi dan apakah baris pertama \textit{shebang}-nya menunjuk ke interpreter yang benar.
+
+Perbedaan ini penting karena file skrip pada dasarnya hanyalah teks biasa. Agar dapat diperlakukan sebagai program mandiri, skrip membutuhkan dua hal sekaligus: penanda interpreter (\textit{shebang}) dan hak akses eksekusi. Tanpa \textit{shebang}, sistem tidak tahu interpreter apa yang harus dipakai saat skrip dipanggil langsung. Tanpa hak eksekusi, sistem akan menolak mengeksekusi file walaupun isinya benar.
+
+Dengan memahami alur ini, mahasiswa dapat lebih mudah menelusuri sumber kesalahan. Error seperti \texttt{Permission denied} biasanya berkaitan dengan izin file, sedangkan error karena interpreter tidak ditemukan biasanya berkaitan dengan baris \textit{shebang} atau lokasi program \texttt{bash}.
+
+\subsection{Ekspansi Variabel dan Substitusi Perintah}
+Salah satu kekuatan utama Bash adalah kemampuannya melakukan ekspansi teks sebelum perintah benar-benar dijalankan. Saat penulis skrip menuliskan \texttt{\$NAMA}, Bash akan mengganti ekspresi tersebut dengan isi variabel yang tersimpan. Mekanisme ini memungkinkan satu skrip yang sama dipakai berulang kali dengan data yang berbeda tanpa menyalin perintah secara manual.
+
+Selain variabel biasa, Bash juga mendukung \textit{command substitution}, misalnya \texttt{\$(pwd)} atau penggunaan karakter \texttt{`...`}. Pada pola ini, Bash menjalankan sebuah perintah lebih dahulu, lalu mengganti ekspresi tersebut dengan hasil keluarannya. Konsep ini berguna ketika skrip perlu membangun nama file, direktori tujuan, atau pesan status berdasarkan keadaan sistem saat itu.
+
+Namun, karena ekspansi dilakukan otomatis, penulisan tanda kutip tetap penting. Variabel yang mengandung spasi, misalnya nama direktori atau nama file, sebaiknya dipanggil sebagai \texttt{"\$NAMA"} agar tetap dibaca sebagai satu argumen utuh.
+
 \subsection{Struktur \textit{Shell Script}}
 
 

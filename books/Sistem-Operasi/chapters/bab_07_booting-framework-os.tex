@@ -46,6 +46,27 @@ Berdasarkan ilustrasi diagram pada Gambar \ref{fig:m07-boot-sequence}, tahapan \
     \item \textbf{Run Level}: Ini adalah kondisi garis finis. Pada tahap \textit{Run Level}, komputer sudah "sadar" sepenuhnya (misalnya berhasil masuk ke layar Terminal/Desktop) dan siap menerima interaksi dari pengguna.
 \end{enumerate}
 
+\subsection{Alur Boot Modul Ini: GRUB $\rightarrow$ \texttt{boot.asm} $\rightarrow$ \texttt{kernel.c}}
+Pada praktikum ini, kita tidak membangun sistem operasi modern yang lengkap dengan layanan \texttt{init} atau \textit{desktop}. Fokus modul adalah \textit{kernel bare-bones} yang hanya cukup untuk dimuat oleh \textit{bootloader} dan mengeksekusi kode C awal. Karena itu, alur \textit{boot} yang relevan untuk modul ini lebih sederhana dan lebih spesifik daripada alur umum PC.
+
+Secara ringkas, GRUB membaca berkas kernel yang telah disusun sesuai aturan \textit{Multiboot}, memuatnya ke memori, lalu melompat ke titik masuk awal yang didefinisikan di \texttt{boot.asm}. Kode Assembly ini bertugas menyiapkan keadaan mesin minimum yang dibutuhkan kernel, terutama \textit{stack} dan simbol awal eksekusi. Setelah keadaan awal siap, kontrol diteruskan ke fungsi C di \texttt{kernel.c}. Jadi, urutannya bukan "GRUB langsung menjalankan C", melainkan GRUB memanggil Assembly sebagai jembatan sebelum logika kernel C dapat berjalan aman.
+
+Jembatan ini penting karena bahasa C mengasumsikan beberapa kondisi mesin sudah tersedia, misalnya \textit{stack pointer} valid dan tata letak memori yang masuk akal. Sebelum kondisi minimum itu dipenuhi, instruksi awal lebih aman ditulis dalam Assembly yang memberi kendali penuh terhadap register dan alur masuk eksekusi.
+
+INS.POST 55:
+
+\subsubsection{Peran Berkas Inti: \texttt{boot.asm}, \texttt{kernel.c}, \texttt{linker.ld}, dan \texttt{Makefile}}
+Empat berkas inti dalam modul ini memiliki tanggung jawab yang berbeda, tetapi saling terhubung erat. Berkas \texttt{boot.asm} memuat \textit{Multiboot Header} dan titik masuk awal \textit{kernel}. Berkas \texttt{kernel.c} berisi logika C pertama yang dijalankan setelah lingkungan eksekusi minimum siap. Berkas \texttt{linker.ld} mengatur letak simbol, seksi kode, dan alamat muat kernel di memori. Sementara itu, \texttt{Makefile} mengorkestrasi proses kompilasi, \textit{linking}, dan pembentukan artefak akhir seperti \texttt{os.iso}.
+
+Dengan memahami pembagian tugas ini, mahasiswa dapat membaca proses \textit{build} sebagai alur sebab-akibat. Jika \texttt{boot.asm} salah, GRUB dapat gagal mengenali kernel. Jika \texttt{linker.ld} salah, kernel mungkin dimuat ke alamat yang tidak sesuai. Jika \texttt{kernel.c} salah, sistem bisa lolos \textit{boot} awal tetapi gagal saat mengeksekusi logika inti. Jika \texttt{Makefile} salah, seluruh rangkaian kompilasi dapat gagal walaupun isi kode setiap berkas benar.
+
+INS.POST 58:
+
+\subsubsection{Peta Memori Awal dan Alasan Alamat 1MB}
+Alamat \texttt{0x100000} (1MB) sering dipakai sebagai titik muat awal kernel x86 sederhana karena ruang memori di bawah 1MB secara historis dipenuhi kebutuhan firmware, tabel BIOS, dan perangkat legacy lain. Dengan menempatkan kernel sedikit lebih tinggi, pengembang mengurangi risiko menimpa area memori rendah yang masih dipakai saat transisi awal \textit{boot}.
+
+Secara praktis, \textit{linker script} harus menyamakan dua hal: letak kode ketika dipaketkan ke biner dan alamat saat kode itu dipetakan ke RAM. Jika alamat muat atau simbol masuk tidak konsisten, CPU dapat melompat ke lokasi yang salah. Akibatnya, sistem bisa berhenti total, \textit{triple fault}, atau tampak "tidak melakukan apa-apa" saat dijalankan di emulator. Inilah alasan pengaturan alamat pada \texttt{linker.ld} bukan sekadar formalitas, melainkan bagian inti dari proses \textit{boot}.
+
 \subsection{Kernel Bare-Bones dan Spesifikasi Multiboot}
 Mengembangkan sistem operasi mensyaratkan kerangka dasar (\textit{bare-bones}) yang dapat beroperasi tanpa dukungan sistem operasi lain \cite{osdev_wiki_barebones}. Karena berstatus independen dan tidak menggunakan modul fungsi dari \textit{standard library}, inisialisasi awal pada perangkat keras komputer wajib diserahkan kepada komponen antarmuka yang sangat spesifik.
 

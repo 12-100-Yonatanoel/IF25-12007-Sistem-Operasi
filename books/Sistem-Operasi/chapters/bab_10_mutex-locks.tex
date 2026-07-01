@@ -57,6 +57,20 @@ Berdasarkan kapasitasnya, semaphore dibagi menjadi dua:
 	\item \textbf{Binary Semaphore}: Nilainya hanya dibatasi pada angka $0$ dan $1$. Sering digunakan untuk menjamin \textit{Mutual Exclusion}.
 \end{enumerate}
 
+\subsection{Atomisitas Operasi Sinkronisasi}
+Meskipun \textit{semaphore} terlihat seperti bilangan pencacah biasa, operasi \texttt{Wait} dan \texttt{Signal} tidak boleh diperlakukan sebagai aritmetika biasa yang bisa disela sembarang waktu. Pada tingkat kernel, langkah "memeriksa nilai, mengubah nilai, lalu memutuskan apakah \textit{thread} harus tidur atau dibangunkan" harus dianggap sebagai satu kesatuan atomik. Jika tidak, dua \textit{thread} dapat membaca keadaan lama yang sama lalu mengambil keputusan yang saling bertabrakan.
+
+Salah satu kegagalan klasik adalah \textit{lost wakeup}. Misalnya, sebuah \textit{thread} melihat nilai semaphore masih nol dan baru akan tidur, tetapi tepat sebelum benar-benar masuk antrean, \textit{thread} lain sudah lebih dulu melakukan \texttt{Signal}. Jika operasi itu tidak atomik, sinyal kebangkitan dapat "hilang": satu pihak sudah mengirim sinyal, tetapi pihak lain tetap tertidur dan sistem masuk keadaan tidak konsisten. Inilah alasan implementasi \texttt{sema\_down()} dan \texttt{sema\_up()} di kernel biasanya dilindungi dari interleaving yang berbahaya, misalnya dengan menonaktifkan interupsi pada bagian kritis yang sangat pendek.
+
+\subsection{Status \textit{Thread}: Ready, Running, dan Blocked}
+Ketika sinkronisasi diterapkan, \textit{thread} tidak hanya bergantian berjalan, tetapi juga dapat keluar sementara dari persaingan CPU. \textit{Thread} yang siap dipilih \textit{scheduler} berada pada status \textit{Ready}. Saat ia sedang memakai CPU, statusnya \textit{Running}. Jika ia memanggil \texttt{Wait} pada semaphore yang belum tersedia, statusnya berubah menjadi \textit{Blocked} dan \textit{thread} tersebut dipindahkan ke antrean penunggu milik objek sinkronisasi.
+
+Perbedaan \textit{Blocked} dengan \textit{busy waiting} sangat penting. Pada \textit{busy waiting}, \textit{thread} terus mengulang pengecekan sambil tetap menghabiskan siklus CPU. Pada pendekatan \textit{blocked}, \textit{thread} justru dikeluarkan dari antrean siap dan baru kembali ke \textit{ready queue} ketika \texttt{Signal} atau \texttt{Unlock} yang relevan terjadi. Model inilah yang lebih efisien dan dipakai dalam praktikum ini melalui pasangan fungsi \texttt{thread\_block()} dan \texttt{thread\_unblock()}.
+
+INS.POST 99:
+
+\noindent \textbf{Invariant dan Urutan Operasi yang Benar:} Pada \textit{bounded buffer}, nilai \texttt{sema\_empty} dan \texttt{sema\_full} harus selalu merepresentasikan jumlah slot kosong dan slot terisi secara konsisten. Karena itu, urutan operasi tidak boleh dibalik sembarangan. \textit{Producer} wajib memastikan slot kosong tersedia lebih dulu, baru memasuki \textit{critical section}. Setelah data benar-benar ditulis, barulah ia memberi sinyal bahwa jumlah data siap baca bertambah. \textit{Consumer} mengikuti pola kebalikannya: pastikan data tersedia, masuk ke area kritis, baca data, lalu umumkan bahwa satu slot kembali kosong. \textit{Mutex} saja tidak cukup menggantikan semaphore counting, karena penguncian hanya melindungi akses serentak, tetapi tidak menghitung kapasitas \textit{buffer}. Jika urutannya salah, sistem dapat menghasilkan jumlah hitung keliru, \textit{deadlock}, atau pembacaan data yang belum valid.
+
 \subsection{Mutex (Mutual Exclusion Lock)}
 
 \textit{Mutex} atau \textit{Lock} adalah mekanisme sinkronisasi yang secara khusus dirancang untuk menjamin \textit{Mutual Exclusion} pada area \textit{Critical Section}.

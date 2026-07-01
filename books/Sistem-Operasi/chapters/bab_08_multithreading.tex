@@ -34,6 +34,25 @@ Konteks eksekusi merujuk pada seluruh status kumpulan register dari prosesor (se
 
 Karena kerumitan modifikasi letak tumpukan memori (\textit{stack}) amat bergantung pada wujud arsitektur silikon sistem biner, prosedur krusial ini umumnya direpresentasikan murni melalui arahan instruksi pada level \textit{Assembly}. Operasi tersebut mutlak ditugaskan untuk mengekstrak simpanan (\textit{Push}) dari *thread* lama seraya mengangkat muatan register (\textit{Pop}) profil milik antrean *thread* pengganti.
 
+\subsection{Stack Awal \textit{Thread} Baru}
+Sebuah \textit{thread} baru tidak muncul dalam keadaan "siap jalan" secara ajaib. Ketika \texttt{thread\_create()} dipanggil, kernel harus menyiapkan \textit{stack} awal sintetis yang isinya menyerupai hasil penyimpanan konteks normal. Dengan cara ini, saat \textit{scheduler} pertama kali memilih \textit{thread} tersebut, kode \textit{context switch} cukup melakukan \textit{restore register} dan melompat ke alamat yang sudah disusun sebelumnya.
+
+Pada praktiknya, \textit{stack} awal ini biasanya memuat alamat fungsi masuk, parameter bantu, dan beberapa nilai register awal. Karena itulah modul ini mengarahkan mahasiswa menyusun beberapa \textit{frame} berlapis di memori. Tujuannya bukan sekadar memenuhi format struktur data, melainkan memastikan perpindahan pertama menuju \textit{thread} baru berlangsung melalui jalur yang sama seperti perpindahan konteks biasa.
+
+\subsection{Siklus Hidup \textit{Thread} dan \textit{Ready Queue}}
+Sepanjang hidupnya, sebuah \textit{thread} akan berpindah-pindah status. Setelah dibuat, \textit{thread} masuk ke status \textit{Ready}, yaitu siap dijadwalkan tetapi belum memegang CPU. Ketika dipilih oleh \textit{scheduler}, statusnya berubah menjadi \textit{Running}. Jika ia menyerahkan CPU secara sukarela melalui \texttt{yield()}, ia kembali ke antrean \textit{Ready}. Jika menunggu suatu kejadian atau sumber daya, statusnya menjadi \textit{Blocked}. Setelah pekerjaannya selesai, \textit{thread} akan keluar dari siklus ini.
+
+\textit{Ready queue} adalah antrean \textit{thread} yang siap dieksekusi. TCB menyimpan identitas dan konteks tiap \textit{thread}, sedangkan \textit{ready queue} menyimpan urutan siapa yang berhak dipertimbangkan oleh \textit{scheduler}. Pemisahan konsep ini penting: TCB menjawab "siapa \textit{thread}-nya dan apa keadaannya", sedangkan antrean menjawab "siapa yang menunggu giliran CPU".
+
+Pada modul ini, \textit{scheduler} yang dibangun masih bersifat sederhana. Ia belum memakai \textit{timer interrupt} untuk merebut CPU secara paksa. Artinya, perpindahan antar \textit{thread} sangat bergantung pada titik-titik sukarela seperti \texttt{yield()} atau blokade karena sinkronisasi.
+
+INS.POST 50:
+
+\subsection{\textit{Cooperative Round-Robin} pada Modul Ini}
+Algoritma penjadwalan yang dipakai sebagai fondasi modul ini adalah \textit{cooperative round-robin}. Istilah \textit{round-robin} berarti \textit{thread} yang siap dijalankan diputar bergiliran dari antrean \textit{ready}. Istilah \textit{cooperative} berarti perpindahan hanya terjadi ketika \textit{thread} yang sedang berjalan rela melepaskan CPU atau masuk ke kondisi \textit{blocked}; bukan karena dipotong paksa oleh \textit{timer interrupt}.
+
+Kelebihan pendekatan ini adalah implementasinya lebih mudah dipahami untuk tahap awal, karena mahasiswa dapat memusatkan perhatian pada struktur antrean, penyimpanan konteks, dan alur \texttt{yield()}. Namun, model ini juga memiliki keterbatasan: jika satu \textit{thread} tidak pernah menyerahkan CPU, maka \textit{thread} lain dapat menunggu sangat lama. Keterbatasan inilah yang nantinya menjadi jembatan menuju pembahasan sinkronisasi dan penjadwalan yang lebih maju pada modul-modul berikutnya.
+
 \subsection{Thread Control Block / TCB}
 Agar sistem pengontrol sanggup menjaga identitas serta alokasi titik perhentian terakhir masing-masing \textit{thread}, direkayasa sebuah skema pelacak terstruktur dinamakan \textit{Thread Control Block} (TCB) \cite{Silberschatz2018}. Menggunakan struktur data mandiri (seperti halnya tipe rekaman mendasar pada bahasa C), blok TCB secara dedikatif membungkus parameter-parameter memori berikut:
 \begin{itemize}

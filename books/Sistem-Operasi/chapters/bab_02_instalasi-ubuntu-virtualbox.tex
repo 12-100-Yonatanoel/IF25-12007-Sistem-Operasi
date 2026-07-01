@@ -26,39 +26,53 @@ Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan:
 
 
 % --- 2. Dasar Teori ---
-% \newpage
-% \section{Dasar Teori}
+\newpage
+\section{Dasar Teori}
 
-% \subsection{Sub-Teori Pertama}
-% \lipsum[2]
+\subsection{Konsep Virtualisasi dan Peran VirtualBox}
+Virtualisasi adalah teknik untuk menjalankan sistem komputer virtual di atas komputer fisik yang sama. Pada praktikum ini, sistem operasi utama pada laptop atau PC Anda berperan sebagai \textit{host operating system}, sedangkan Ubuntu yang akan dipasang di dalam VirtualBox berperan sebagai \textit{guest operating system}. VirtualBox sendiri bertindak sebagai \textit{hypervisor type-2}, yaitu perangkat lunak yang meminjam sebagian sumber daya \textit{host} (CPU, RAM, penyimpanan, dan perangkat I/O) lalu menyajikannya sebagai mesin virtual mandiri bagi \textit{guest}.
 
-% \subsection{Sub-Teori Kedua}
-% \lipsum[3]
+Pendekatan ini penting dalam praktikum sistem operasi karena memberi lingkungan yang aman dan terisolasi. Kesalahan konfigurasi, eksperimen perintah, atau kegagalan \textit{boot} di dalam Ubuntu tidak langsung merusak sistem utama pengguna. Selain itu, seluruh mahasiswa dapat bekerja dengan lingkungan Linux yang relatif seragam meskipun komputer \textit{host}-nya berbeda-beda.
 
-% \subsubsection{Sub-Sub-Teori A}
-% \lipsum[4]
+File \texttt{ISO} Ubuntu yang digunakan pada modul ini adalah citra media instalasi. Secara konseptual, berkas ini setara dengan keping DVD instalasi, hanya saja berbentuk file. Saat file ISO dipasangkan ke VM, firmware virtual akan melakukan \textit{boot} dari ISO tersebut dan memulai program instalasi Ubuntu.
 
-% \subsubsection{Sub-Sub-Teori B}
-% \lipsum[5]
+\subsection{Komponen Konfigurasi Mesin Virtual}
+Sebelum instalasi dimulai, VirtualBox meminta beberapa parameter konfigurasi. Masing-masing parameter memiliki fungsi teknis yang perlu dipahami agar pengaturan VM tidak dilakukan sekadar mengikuti klik antarmuka.
 
-% \subsection{Sub-Teori Ketiga}
-% \lipsum[6]
+\begin{itemize}
+    \item \textbf{Name}: penanda administrasi VM pada VirtualBox. Nama ini memudahkan identifikasi, tetapi tidak memengaruhi kinerja sistem.
+    \item \textbf{ISO Image}: sumber media \textit{boot} awal yang berisi installer Ubuntu.
+    \item \textbf{Username}, \textbf{Password}, dan \textbf{Hostname}: identitas akun awal dan nama mesin yang akan dipakai setelah instalasi selesai.
+    \item \textbf{Base Memory (RAM)}: jumlah memori fisik \textit{host} yang dipinjam sementara oleh VM saat dijalankan. Jika terlalu kecil, installer dan sistem Ubuntu akan terasa lambat; jika terlalu besar, sistem \textit{host} dapat ikut kekurangan memori.
+    \item \textbf{Processor}: jumlah inti CPU virtual yang dialokasikan. Menambah inti dapat mempercepat pekerjaan tertentu, tetapi alokasi berlebihan juga dapat membuat \textit{host} tidak responsif.
+    \item \textbf{Virtual Hard Disk}: ruang penyimpanan virtual tempat Ubuntu, aplikasi, dan data \textit{guest} disimpan. Disk ini biasanya berupa file besar pada mesin \textit{host}.
+\end{itemize}
 
-% Tabel \ref{tab:m02-dasar-teori} merangkum hal-hal penting terkait teori di atas.
+Prinsip umumnya adalah membagi sumber daya secara seimbang. VM harus mendapat sumber daya yang cukup untuk berjalan lancar, tetapi sistem \textit{host} tetap harus menyisakan kapasitas agar VirtualBox dan aplikasi pendukung lain tetap stabil.
 
-% \begin{table}[h]
-% \caption{Tabel Ringkasan Dasar Teori}
-% \label{tab:m02-dasar-teori}
-% \centering
-% \begin{tabulary}{\textwidth}{|L|L|}
-% \hline
-% \textbf{Konsep} & \textbf{Penjelasan Singkat} \\ \hline
-% Konsep A        & \textit{TODO: isi penjelasan} \\ \hline
-% Konsep B        & \textit{TODO: isi penjelasan} \\ \hline
-% Konsep C        & \textit{TODO: isi penjelasan} \\ \hline
-% Konsep D        & \textit{TODO: isi penjelasan} \\ \hline
-% \end{tabulary}
-% \end{table}
+\subsection{Tahapan Umum Instalasi Ubuntu}
+Secara umum, instalasi Ubuntu di VM berlangsung melalui empat tahap. Pertama, VM melakukan \textit{boot} dari file ISO dan menjalankan program installer. Kedua, installer menyalin berkas sistem dasar Ubuntu ke \textit{virtual hard disk}. Ketiga, installer membuat akun pengguna, nama komputer, dan konfigurasi awal lain. Keempat, sistem melakukan \textit{restart} dan \textit{boot} ulang dari disk virtual yang baru saja diisi, bukan lagi dari file ISO.
+
+Memahami alur ini membantu mahasiswa membaca gejala saat instalasi berlangsung. Misalnya, jika VM gagal \textit{boot} dari awal, masalah biasanya berada pada pemilihan ISO atau urutan \textit{boot}. Jika proses sangat lambat, penyebab umumnya adalah alokasi RAM/CPU yang terlalu kecil. Jika setelah \textit{restart} sistem kembali ke installer, kemungkinan media \textit{boot} masih mengarah ke ISO, bukan ke disk virtual hasil instalasi.
+
+Tabel \ref{tab:m02-dasar-teori} merangkum komponen inti yang perlu dipahami sebelum praktik instalasi.
+
+\begin{table}[h]
+\caption{Tabel Ringkasan Dasar Teori Modul 2}
+\label{tab:m02-dasar-teori}
+\centering
+\begin{tabulary}{\textwidth}{|L|L|}
+\hline
+\textbf{Konsep} & \textbf{Penjelasan Singkat} \\ \hline
+Host OS & Sistem operasi utama pada komputer fisik yang menjalankan VirtualBox. \\ \hline
+Guest OS & Sistem operasi tamu (Ubuntu) yang dipasang dan dijalankan di dalam mesin virtual. \\ \hline
+Hypervisor Type-2 & Perangkat lunak virtualisasi yang berjalan di atas \textit{host OS} untuk membuat dan mengelola VM. \\ \hline
+ISO Image & Berkas citra instalasi yang digunakan VM sebagai media \textit{boot} awal. \\ \hline
+Base Memory / Processor & Parameter alokasi sumber daya yang menentukan performa VM dan beban pada \textit{host}. \\ \hline
+Virtual Hard Disk & Berkas penyimpanan virtual yang menjadi media instalasi dan data Ubuntu di dalam VM. \\ \hline
+\end{tabulary}
+\end{table}
+
 
 % --- 3. Alat dan Bahan ---
 \section{Alat dan Bahan}

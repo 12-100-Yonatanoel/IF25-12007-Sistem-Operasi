@@ -65,6 +65,13 @@ Round-Robin memilih : Low  (posisi depan, FIFO)
 Priority memilih    : High (nilai priority tertinggi)
 \end{lstlisting}
 
+\subsection{\textit{Tie-Breaking} saat Prioritas Sama}
+Dalam praktik, bisa saja dua atau lebih \textit{thread} memiliki nilai prioritas yang sama. Pada kondisi seperti ini, \textit{scheduler} tetap membutuhkan aturan tambahan agar keputusan tidak tampak acak. Salah satu kebijakan yang paling sederhana dan stabil adalah mempertahankan urutan kedatangan di dalam kelompok prioritas yang sama: \textit{thread} yang lebih dulu masuk antrean tetap dipilih lebih dahulu.
+
+Kebijakan \textit{tie-breaking} ini penting untuk menjaga keterjelasan perilaku sistem. Tanpa aturan tambahan, dua implementasi yang sama-sama "benar" menurut definisi prioritas dapat menghasilkan urutan eksekusi yang berbeda-beda dan sulit dianalisis. Dengan urutan yang stabil, mahasiswa dapat membedakan dua lapisan keputusan \textit{scheduler}: prioritas menentukan kelompok pemenang, sedangkan urutan kedatangan menentukan pemenang di dalam kelompok dengan prioritas identik.
+
+Perlu dicatat bahwa prioritas sama tidak otomatis menyebabkan \textit{starvation}. Masalah \textit{starvation} muncul ketika selalu ada \textit{thread} lain dengan prioritas lebih tinggi yang terus-menerus siap berjalan. Jika prioritasnya sama dan kebijakan antreannya stabil, fairness masih dapat dipertahankan di dalam kelas prioritas tersebut.
+
 \begin{table}[htbp]
 	\centering
 	\caption{Perbandingan Round-Robin dan Priority Scheduling}

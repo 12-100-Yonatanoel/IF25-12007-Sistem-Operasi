@@ -48,6 +48,13 @@ target: prerequisites (syarat/dependensi)
 	\item \textbf{Recipe}: (Resep) Perintah-perintah baris komando/terminal spesifik (\textit{shell commands}) yang harus dijalankan. \textbf{Perhatian Penting:} Karakter pertama pada setiap baris resep WAJIB menggunakan satu karakter penjarakan \textbf{TAB}, tidak boleh menggunakan spasi biasa.
 \end{itemize}
 
+\subsection{Ketergantungan Berkas dan \textit{Incremental Build}}
+Kekuatan utama \textit{Make} bukan hanya menjalankan kumpulan perintah, melainkan menjaga hubungan ketergantungan antarberkas. Dalam proyek C sederhana, relasi yang umum adalah \texttt{main.c} menghasilkan \texttt{main.o}, lalu beberapa berkas objek digabung menjadi satu \textit{executable}. Relasi ini membentuk graf dependensi: jika satu berkas sumber berubah, hanya target yang bergantung padanya yang perlu dibangun ulang.
+
+\textit{Make} menentukan kebutuhan \textit{rebuild} dengan membandingkan cap waktu modifikasi (\textit{timestamp}) antara \textit{target} dan \textit{prerequisite}. Jika \textit{prerequisite} lebih baru daripada \textit{target}, maka \textit{recipe} dijalankan kembali. Sebaliknya, jika tidak ada perubahan, \textit{Make} akan melewati langkah tersebut dan memberi tahu bahwa target sudah \textit{up to date}. Inilah sebabnya mengapa \textit{Make} sangat efisien untuk proyek multi-file.
+
+Sebagai contoh, ketika hanya \texttt{matematika.c} yang diubah, \textit{Make} tidak perlu mengompilasi ulang seluruh proyek dari awal. Ia cukup membangun ulang \texttt{matematika.o}, lalu menautkan ulang \textit{executable} akhir jika memang bergantung pada file objek tersebut. Konsep ini penting agar mahasiswa memahami bahwa \textit{Makefile} bukan sekadar tempat menaruh perintah kompilasi, melainkan model deklaratif hubungan antar artefak \textit{build}.
+
 \subsection{Variabel (Makro) dalam Make}
 Untuk menghindari pengetikan ulang dan mempermudah perubahan konfigurasi, Makefile mendukung variabel. Misalnya, menentukan tipe kompiler.
 Contoh inisialisasi: \texttt{CC = gcc}. Cara memanggilnya adalah menggunakan simbol dolar dan kurung: \texttt{\$(CC)}.
