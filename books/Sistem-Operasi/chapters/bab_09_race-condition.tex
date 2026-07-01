@@ -1,0 +1,225 @@
+% ============================================================
+%  Modul 9 — Analisis Race Condition
+% ============================================================
+
+\chapter{Analisis Race Condition}
+\label{chap:modul-09}
+
+% --- 1. Tujuan dan Output Praktikum ---
+\section{Tujuan dan Output Praktikum}
+
+\subsection{Tujuan Praktikum}
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+\begin{enumerate}
+	\item Memahami konsep \textit{Race Condition} pada sistem operasi \textit{multithreading}.
+	\item Mengidentifikasi \textit{Critical Section} pada penggunaan memori bersama (\textit{shared memory}).
+	\item Menganalisis dampak ketiadaan mekanisme sinkronisasi terhadap integritas data pada \textit{cooperative scheduling}.
+	\item Menghubungkan perilaku \texttt{thread\_yield()} dengan konsep preemption pada sistem nyata.
+\end{enumerate}
+
+\subsection{Output Praktikum}
+Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan:
+\begin{itemize}
+	\item Eksekusi kernel yang mendemonstrasikan anomali \textit{Producer-Consumer problem} tanpa sinkronisasi.
+	\item Laporan analisis log yang menunjukkan terjadinya \textit{data inconsistency} akibat \textit{race condition}.
+\end{itemize}
+
+
+% --- 2. Dasar Teori ---
+\newpage
+\section{Dasar Teori}
+
+\subsection{Race Condition}
+\textit{Race Condition} (Kondisi Balapan) merupakan suatu anomali yang terjadi ketika dua atau lebih \textit{thread} secara bersamaan mengakses dan memodifikasi sumber daya yang sama (\textit{shared resources}). Hal ini mengakibatkan ketidakkonsistenan pada hasil akhir, bergantung pada urutan \textit{thread} mana yang dieksekusi lebih dahulu oleh sistem \cite{noauthor_race_nodate}.\\
+Sebagai analogi, bayangkan ada satu buah mobil dan dua orang pengguna. Pengguna pertama ingin mengendarai mobil tersebut, sementara pengguna kedua ingin mengecatnya menjadi warna putih. Jika kedua tindakan ini dilakukan secara bersamaan tanpa adanya koordinasi, hasil akhirnya akan menjadi rancu. Bisa jadi mobil tersebut dibawa pergi saat baru dicat sebagian, atau justru pengecatan gagal dilakukan karena mobilnya sudah keburu dibawa pergi.\\
+Contoh \textit{race condition} pada bahasa tingkat tinggi seperti C++ (standar C++23 digunakan untuk kemudahan pengenalan konsep):
+\begin{lstlisting}[language=C++, caption={Contoh Race Condition pada C++}]
+#include <print>
+#include <thread>
+
+// Variabel counter sebagai shared resources
+auto counter = 0;
+
+// Fungsi increment melakukan penambahan pada variable counter sampai 100.000 kali
+auto increment() -> void {
+    for (auto i = 0; i < 100'000; ++i) {
+        counter++;
+    }
+}
+
+auto main() -> int {
+    // Dua thread berbeda sama-sama menjalankan fungsi increment yang sama
+    std::thread t1(increment);
+    std::thread t2(increment);
+
+    // Menunggu thread t1 dan t2 selesai
+    t1.join();
+    t2.join();
+
+    // Hasil akhir akan acak dan tidak konsisten
+    std::println("{}", counter);
+}
+\end{lstlisting}
+Pada materi ini diperkenalkan beberapa konsep teknis, yaitu: \\
+\begin{enumerate}
+	\item Concurrency dan Shared Memory
+	\item Critical Section dan Mutual Exclusion
+	\item Producer-Consumer (Bounded-Buffer Problem)
+\end{enumerate}
+
+\subsection{Concurrency dan Shared Memory}
+\textit{Concurrency} adalah kemampuan sistem operasi untuk menjalankan beberapa proses atau \textit{thread} seolah-olah secara bersamaan. Tujuannya adalah untuk meningkatkan efisiensi penggunaan prosesor. Melalui mekanisme perpindahan konteks (\textit{context switching}) pada satu inti CPU, sistem dapat mengerjakan beberapa tugas sekaligus secara bergantian dengan sangat cepat \cite{noauthor_concurrency_nodate}. Meskipun memberikan kinerja yang lebih baik, \textit{concurrency} memunculkan sejumlah tantangan baru, seperti \textit{Race Condition}, \textit{Deadlock}, dan \textit{Blocking}. \\
+
+Sementara itu, \textit{Shared Memory} merupakan area memori yang sengaja dialokasikan agar dapat diakses secara bersama-sama oleh dua atau lebih proses maupun \textit{thread} yang berbeda.
+
+\subsection{Critical Section dan Mutual Exclusion}
+\textit{Critical Section} adalah bagian dari kode program yang mengakses \textit{shared resource} dan \textbf{hanya boleh dieksekusi oleh satu thread pada satu waktu}.
+Jika lebih dari satu thread memasuki \textit{critical section} secara bersamaan, \textit{race condition} dapat terjadi dan integritas data tidak dapat dijamin.
+
+Terdapat tiga syarat yang harus dipenuhi oleh mekanisme proteksi \textit{critical section}:
+\begin{enumerate}
+	\item \textbf{Mutual Exclusion} --- Hanya satu \textit{thread} yang boleh berada di dalam \textit{critical section} pada satu waktu.
+	\item \textbf{Progress} --- Jika tidak ada \textit{thread} di dalam \textit{critical section}, \textit{thread} yang menunggu harus dapat segera masuk tanpa penundaan.
+	\item \textbf{Bounded Waiting} --- Setiap \textit{thread} yang menunggu harus dijamin akan mendapat giliran dalam waktu yang terbatas (tidak \textit{starving}).
+\end{enumerate}
+
+\subsection{Preemption dan Cooperative Scheduling}
+\textit{Preemption} adalah tindakan sistem operasi untuk menghentikan sementara (interupsi) eksekusi proses atau \textit{thread} yang sedang berjalan agar CPU dapat dialokasikan ke \textit{thread} lain.
+Pada sistem operasi modern yang bersifat \textit{preemptive scheduling}, perpindahan ini dapat terjadi kapan saja secara paksa tanpa persetujuan dari \textit{thread} tersebut (biasanya dikendalikan oleh \textit{timer interrupt} dari perangkat keras).
+Sebaliknya, pada \textit{cooperative scheduling}, sebuah \textit{thread} harus menyerahkan kontrol CPU kepada \textit{scheduler}.
+
+\subsection{Producer-Consumer}
+\textit{Producer-Consumer problem} (atau \textit{Bounded-Buffer problem}) adalah skenario klasik dalam sistem operasi yang melibatkan dua jenis thread:
+\begin{itemize}
+	\item \textbf{Producer} --- \textit{thread} yang menghasilkan data dan menulisnya ke \textit{shared buffer}.
+	\item \textbf{Consumer} --- \textit{thread} yang mengonsumsi data dengan membacanya dari \textit{shared buffer}.
+\end{itemize}
+
+Masalah muncul ketika Producer dan Consumer mengakses \textit{shared buffer} tanpa koordinasi:
+\begin{itemize}
+	\item Producer bisa menimpa data yang belum sempat dibaca Consumer (\textit{data loss}).
+	\item Consumer bisa membaca data lama atau data yang sudah diperbarui di tengah jalan (\textit{stale read}).
+	\item Log yang dicetak ke layar bisa terpotong atau bercampur (\textit{interleaved output}).
+\end{itemize}
+
+Tabel \ref{tab:m09-dasar-teori} merangkum hal-hal penting terkait teori di atas.
+
+\begin{table}[h]
+	\caption{Tabel Ringkasan Dasar Teori Modul 9}
+	\label{tab:m09-dasar-teori}
+	\centering
+	\begin{tabulary}{\textwidth}{|L|L|}
+		\hline
+		\textbf{Konsep} & \textbf{Penjelasan Singkat} \\ \hline
+		Race Condition
+		& Kondisi di mana dua atau lebih \textit{thread} mengakses \textit{shared resource} secara bersamaan sehingga hasil akhir tidak konsisten. \\ \hline
+		Critical Section
+		& Bagian kode yang mengakses \textit{shared resource} dan hanya boleh dijalankan oleh satu \textit{thread} pada satu waktu. \\ \hline
+		Shared Memory
+		& Variabel atau area memori yang dapat diakses oleh lebih dari satu \textit{thread} (\texttt{shared\_buffer}). \\ \hline
+		Preemption
+		& Kondisi di mana CPU berpindah ke \textit{thread} lain di tengah eksekusi; disimulasikan oleh \texttt{thread\_yield()}. \\ \hline
+		Producer-Consumer
+		& Pola dua \textit{thread} yang saling berbagi \textit{buffer}: \textit{Producer} menulis, \textit{Consumer} membaca, tanpa koordinasi hasilnya tidak konsisten. \\ \hline
+	\end{tabulary}
+\end{table}
+
+
+% --- 3. Alat dan Bahan ---
+\newpage
+\section{Alat dan Bahan}
+\label{sec:m09-alat-bahan}
+
+\subsection{Perangkat Keras}
+\begin{itemize}
+	\item PC atau Laptop dengan arsitektur prosesor basis \textit{host} x86/x64 yang mendukung kelanjutan kompilasi emulator.
+	\item Memori minimal 4GB RAM ruang eksekusi.
+\end{itemize}
+
+\subsection{Perangkat Lunak (Bahan Praktikum)}
+\begin{itemize}
+	\item OS \textit{Host} utama (Windows dengan WSL/GitBash, Linux, atau macOS).
+	\item Text Editor (misalnya Visual Studio Code) untuk menyunting berkas kode bahasa C dan \textit{Assembly}.
+	\item Instalasi Docker Engine (\texttt{docker.io}) untuk menyalakan lingkungan isolasi kompilasi.
+	\item Emulator Hardware x86: \texttt{qemu-system-x86} (atau instalasi QEMU setara) yang akan mengeksekusi binari hasil OS.
+	\item Direktori \textit{Starter Code} OS 32-bit yang sudah disiapkan sebelumnya (berisi direktori \texttt{src} dengan kerangka lengkap \texttt{kernel.c}, \texttt{thread.h}, \texttt{thread.c}, \texttt{switch.asm}, \texttt{scheduler.h}, dsb).
+\end{itemize}
+
+
+% --- 4. Langkah-Langkah Praktikum ---
+\newpage
+\section{Langkah-Langkah Praktikum}
+
+\subsection{Persiapan Lingkungan}
+\label{sec:m09-persiapan}
+
+Sebelum memulai praktikum, pastikan \textit{toolchain} dan \textit{source code} OS sudah tersedia.
+Karena praktikum ini merupakan lanjutan dari pembuatan penjadwal (Minggu 4), implementasi \texttt{thread\_create()}, \texttt{thread\_yield()}, dan \texttt{next\_thread\_to\_run()} di \texttt{thread.c} \textbf{harus sudah selesai dan berjalan dengan benar}. Jika Anda menggunakan \textit{starter code} mentah, simulasi akan terhenti seketika dan menghasilkan pesan \textit{error}: \texttt{kernel\_main() kembali dari thread\_block()!}.
+
+\begin{enumerate}
+	\item Buat direktori kerja baru khusus untuk praktikum minggu ke-5, lalu pindah ke direktori tersebut.
+	      \begin{lstlisting}[language=bash, caption={Membuat direktori kerja baru}]
+mkdir praktikum-minggu5
+cd praktikum-minggu5
+    \end{lstlisting}
+
+	\item Lakukan \textit{clone} ulang \textit{source code} OS dari repositori GitHub untuk memastikan Anda memulai dengan lingkungan (\textit{environment}) yang bersih.
+	      \begin{lstlisting}[language=bash, caption={Mengunduh starter code melalui Git}]
+git clone https://github.com/sinavarasina/starter-code-os32.git
+cd starter-code-os32
+    \end{lstlisting}
+
+	\item \textbf{Langkah Kritis:} Timpa (\textit{replace}) file \texttt{src/thread.c} bawaan repositori dengan implementasi \texttt{thread.c} yang sudah berfungsi dari Minggu 4. Anda dapat menggunakan perintah \texttt{wget} berikut untuk langsung mengunduh kode yang sudah dipersiapkan oleh asisten ke dalam folder \texttt{src/}.
+	      \begin{lstlisting}[language=bash, caption={Mengganti thread.c dengan versi yang sudah lengkap}]
+# Mengunduh file thread.c (versi lengkap) dan menimpanya ke folder src/
+wget -O src/thread.c https://pastebin.com/raw/mb4DJf1p
+# Jika wget belum terinstal, buka tautan pada peramban web dan salin kontennya secara manual
+    \end{lstlisting}
+
+	\item Verifikasi bahwa seluruh berkas sumber (\textit{source code}) sudah lengkap.
+	      \begin{lstlisting}[language=bash, caption={Verifikasi direktori source code}]
+ls src/
+# Harus menampilkan: boot.asm  kernel.c  synch.c  synch.h
+#                    switch.asm  thread.c  thread.h
+#                    types.h  vga.c  vga.h
+    \end{lstlisting}
+\end{enumerate}
+
+\subsection{Sesi 1: Menjalankan Demo Race Condition}
+\label{sec:m09-sesi-1}
+
+Pada sesi ini, praktikan akan mengompilasi dan menjalankan OS dengan \textit{flag} \texttt{SYNCHRONIZATION}.
+\textbf{Tidak perlu mengubah kode apa pun}, cukup amati keluaran (\textit{output}) yang muncul di layar QEMU.
+
+Perhatikan bahwa pada file \texttt{kernel.c}, terdapat dua pemanggilan \texttt{thread\_yield()} yang sengaja ditempatkan sebagai "jebakan" di tengah area \textit{critical section}:
+\begin{itemize}
+	\item Di dalam \texttt{producer()}: setelah \texttt{shared\_buffer = item} tetapi \textbf{sebelum} mencetak log.
+	\item Di dalam \texttt{consumer()}: setelah mencetak teks \texttt{"[Consumer] membaca item "} tetapi \textbf{sebelum} mencetak angkanya.
+\end{itemize}
+
+\begin{enumerate}
+	\item \textit{Aktivasi lingkungan tersetup \& terisolasi}.
+	      \begin{lstlisting}[language=bash, caption={Menjalankan Docker menggunakan script}]
+    ./run-docker.sh # Opsional bagi pengguna Linux, namun disarankan menggunakan Docker demi kemudahan 
+    \end{lstlisting}
+	\item \textit{Compile} OS dengan \textit{flag} \texttt{SYNCHRONIZATION} diaktifkan.
+	      \begin{lstlisting}[language=bash, caption={Compile dengan flag SYNCHRONIZATION}]
+make DEMO=-DSYNCHRONIZATION
+    \end{lstlisting}
+
+	\item Jalankan kernel di QEMU dan amati keluaran (\textit{output}) di layar.
+	      \begin{lstlisting}[language=bash, caption={Menjalankan kernel di QEMU}]
+make run
+    \end{lstlisting}
+
+	\item Amati keluaran yang muncul selama kurang lebih 10-15 detik, ambil tangkapan layar (\textit{screenshot}), lalu tutup QEMU.
+	      Lihat anomali yang ditemukan: apakah ada baris yang terpotong, angka yang tidak urut, atau keluaran yang bercampur?
+\end{enumerate}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.85\textwidth]{Figure/09/1.jpeg}
+	\caption{Contoh keluaran (\textit{output}) QEMU yang menunjukkan \textit{race condition} pada Producer-Consumer tanpa sinkronisasi.
+		Perhatikan baris yang terpotong dan angka yang tidak konsisten.}
+	\label{fig:m09-sesi1}
+\end{figure}

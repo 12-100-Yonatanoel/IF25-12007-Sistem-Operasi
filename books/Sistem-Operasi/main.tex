@@ -1,0 +1,107 @@
+\documentclass[10pt,a5paper,openright]{report}
+\usepackage{config}
+
+\pagestyle{main}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+% ===== HALAMAN SAMPUL =====
+\thispagestyle{empty}
+\newgeometry{margin=0cm}
+\begin{tikzpicture}[remember picture, overlay]
+    % --- Top accent bar ---
+    \fill[accentdark] (current page.north west) rectangle
+        ([yshift=-3.5cm]current page.north east);
+    % --- Logo ---
+    \node[anchor=center] at ([yshift=-1.75cm]current page.north)
+        {\includegraphics[scale=0.15]{Figure/ifitera-header.png}};
+\end{tikzpicture}
+\begin{center}
+    \vspace*{4cm}
+    {\color{accentdark}\fontsize{27}{32}\selectfont\bfseries\bookTitle{}}\\[1.2cm]
+    {\color{accent}\rule{0.35\textwidth}{2pt}}\\[1.2cm]
+    {\color{textsec}\small
+        Ahmat Prayoga Sembiring \textperiodcentered{} Andryano Shevchenko Limbong\\[4pt]
+        Aziz Kurniawan \textperiodcentered{} Dito Rifki Irawan\\[4pt]
+        Ebentua Philippus Limbong \textperiodcentered{} Eko Dwi Nugroho\\[4pt]
+        Elsa Elisa Yohana Sianturi \textperiodcentered{} Fathan Andi Kartagama\\[4pt]
+        I Wayan Wiprayoga Wisesa \textperiodcentered{} Ilham Firman Ashari\\[4pt]
+        Martin Clinton Tosima Manullang \textperiodcentered{} Miftahul Khoiriyah\\[4pt]
+        Muhammad Bintang Al-Fasya \textperiodcentered{} Muhammad Fadhil Zurani\\[4pt]
+        Reza Chairul Manam \textperiodcentered{} Stevanus Cahya Anggara\\[4pt]
+        Varasina Farmadani \textperiodcentered{} Zakhi Algifari
+    }\\[1.6cm]
+    \vfill
+    {\color{textsec}\small\textcopyright{} \the\year{} --- \institution{}}\\[1.5cm]
+\end{center}
+\restoregeometry
+\newpage
+
+% ===== KATA PENGANTAR =====
+\thispagestyle{empty}
+\section*{Kata Pengantar}
+Buku ini disusun dari materi \textit{Modul Praktikum} dan \textit{Hands-On} mata kuliah \courseName{} (\courseCode{}) di \institution{}. Setiap bab menggabungkan dasar teori, langkah-langkah praktikum, dan bagian \textbf{Latihan} berisi soal-soal untuk memperdalam pemahaman pembaca, disusun berurutan dari pengenalan konsep sistem operasi hingga implementasi komponen kernel (multi-threading, sinkronisasi, dan penjadwalan proses) pada sistem operasi \textit{bare-metal} 32-bit.
+\newpage
+
+% ===== DAFTAR ISI =====
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%% BODY DOCUMENT %%%%%%%%%%%%%%%%%%%%%
+\input{chapters/bab_01_pengenalan-os-vm}
+\input{chapters/bab_02_instalasi-ubuntu-virtualbox}
+\input{chapters/bab_03_navigasi-izin-linux}
+\input{chapters/bab_04_bash-scripting}
+\input{chapters/bab_05_build-gcc}
+\input{chapters/bab_06_makefile}
+\input{chapters/bab_07_booting-framework-os}
+\input{chapters/bab_08_multithreading}
+\input{chapters/bab_09_race-condition}
+\input{chapters/bab_10_mutex-locks}
+\input{chapters/bab_11_scheduling-round-robin}
+\input{chapters/bab_12_scheduling-priority}
+
+%%%%%%%%%%%%%%%%%%%%% KONTRIBUSI PENULIS %%%%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+\section*{Kontribusi Penulis}
+\addcontentsline{toc}{section}{Kontribusi Penulis}
+
+Bagian ini mencantumkan kontribusi masing-masing individu dalam penyusunan buku ajar ini.
+
+\subsection*{Penulis}
+\begin{itemize}[label=]
+    \item Ahmat Prayoga Sembiring
+    \item Andryano Shevchenko Limbong
+    \item Aziz Kurniawan
+    \item Dito Rifki Irawan
+    \item Ebentua Philippus Limbong
+    \item Elsa Elisa Yohana Sianturi
+    \item Fathan Andi Kartagama
+    \item Miftahul Khoiriyah
+    \item Muhammad Bintang Al-Fasya
+    \item Muhammad Fadhil Zurani
+    \item Reza Chairul Manam
+    \item Stevanus Cahya Anggara
+    \item Varasina Farmadani
+    \item Zakhi Algifari
+\end{itemize}
+
+\subsection*{Editor dan Proofreader}
+\begin{itemize}[label=]
+    \item Eko Dwi Nugroho
+    \item I Wayan Wiprayoga Wisesa
+    \item Ilham Firman Ashari
+    \item Martin Clinton Tosima Manullang
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%% REFERENSI %%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\bibname}{Bibliography}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{Referensi}
+
+\end{document}

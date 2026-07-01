@@ -1,0 +1,206 @@
+% ============================================================
+%  Modul 1 — Pengenalan Antarmuka Sistem Operasi dan Virtual Machine
+% ============================================================
+
+\chapter{Pengenalan Antarmuka Sistem Operasi dan Virtual Machine}
+\label{chap:modul-01}
+
+% --- 1. Tujuan dan Output Praktikum ---
+\section{Tujuan dan Output Praktikum}
+
+\subsection{Tujuan Praktikum}
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+\begin{enumerate}
+    \item Menjelaskan konsep sistem operasi sebagai pengelola sumber daya komputer.
+    \item Mengidentifikasi fungsi utama sistem operasi (manajemen proses, memori, berkas, dan I/O).
+    \item Membedakan antarmuka GUI dan CLI berdasarkan karakteristik serta penggunaannya.
+    \item Memahami konsep dasar \textit{Virtual Machine} dan peranannya dalam praktikum sistem operasi.
+\end{enumerate}
+
+\subsection{Output Praktikum}
+Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan:
+\begin{itemize}
+    \item Ringkasan pemahaman mengenai sistem operasi dan fungsinya.
+    \item Hasil eksplorasi perbedaan GUI dan CLI pada sistem operasi.
+\end{itemize}
+
+% --- 2. Dasar Teori ---
+\newpage
+\section{Dasar Teori}
+
+\subsection{Konsep Sistem Operasi}
+
+Sistem Operasi (\textit{Operating System}/OS) merupakan perangkat lunak sistem yang berfungsi sebagai penghubung antara pengguna (\textit{user}), perangkat lunak aplikasi, dan perangkat keras komputer. Hubungan tersebut dapat dipahami melalui model arsitektur berlapis sebagaimana ditunjukkan pada Gambar~\ref{fig:arsitektur-sistem-operasi}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Figure/01/architecture-so.png}
+    \caption{Arsitektur Sistem Operasi}
+    \label{fig:arsitektur-sistem-operasi}
+\end{figure}
+
+Pada lapisan paling atas terdapat \textit{User} (\textit{User 1, User 2, \dots, User n}) yang merepresentasikan individu atau entitas yang menggunakan sistem komputer. Pengguna tidak berinteraksi secara langsung dengan perangkat keras, melainkan melalui perangkat lunak sebagai perantara.
+
+Lapisan berikutnya adalah \textit{Software}, yang terdiri atas dua kategori utama:
+\begin{enumerate}
+    \item \textbf{\textit{Application Software}}: Perangkat lunak yang digunakan langsung oleh pengguna untuk menyelesaikan tugas tertentu, seperti pengolah kata, peramban web, maupun perangkat lunak pemrograman.
+    \item \textbf{\textit{System Software}}: Perangkat lunak pendukung yang membantu pengoperasian sistem secara keseluruhan, seperti \textit{compiler}, \textit{interpreter}, dan utilitas sistem.
+\end{enumerate}
+
+Di bawah kedua jenis perangkat lunak tersebut terdapat \textit{Operating System}. Pada lapisan ini, sistem operasi berperan sebagai pengelola dan pengendali utama sistem komputer. Sistem operasi menjadi perantara antara perangkat lunak dan perangkat keras sekaligus menyediakan mekanisme layanan bagi aplikasi.
+
+Lapisan paling bawah adalah \textit{Hardware}, yang meliputi:
+\begin{enumerate}
+    \item \textbf{CPU (\textit{Central Processing Unit})} sebagai pemroses instruksi.
+    \item \textbf{RAM (\textit{Random Access Memory})} sebagai media penyimpanan sementara.
+    \item \textbf{Perangkat I/O (\textit{Input/Output})} seperti \textit{keyboard}, \textit{mouse}, monitor, dan media penyimpanan.
+\end{enumerate}
+
+Struktur berlapis tersebut menunjukkan alur interaksi sebagai berikut:
+\begin{enumerate}
+    \item Pengguna berinteraksi dengan aplikasi.
+    \item Aplikasi meminta layanan kepada sistem operasi.
+    \item Sistem operasi mengatur dan mengalokasikan sumber daya perangkat keras.
+    \item Perangkat keras mengeksekusi instruksi.
+\end{enumerate}
+
+Dengan demikian, sistem operasi tidak sekadar berfungsi sebagai penghubung, tetapi sebagai \textit{resource manager} yang mengelola alokasi, penggunaan, dan proteksi sumber daya seperti CPU, memori, dan perangkat I/O agar sistem dapat berjalan secara efisien, terorganisasi, dan stabil \cite{tutorialspoint_os_overview}.
+
+\subsection{Fungsi Utama Sistem Operasi}
+Secara umum, sistem operasi memiliki beberapa fungsi utama sebagai pengelola sumber daya dalam sistem komputer, yaitu:
+
+\begin{enumerate}
+    \item \textbf{Manajemen Proses}
+    
+    Sistem operasi mengatur eksekusi program yang sedang berjalan (proses) serta melakukan pembagian waktu penggunaan prosesor (CPU). Dalam lingkungan \textit{multiprogramming}, sistem operasi menentukan proses mana yang dijalankan, kapan dijalankan, dan berapa lama waktu eksekusinya.
+
+    \item \textbf{Manajemen Memori}
+    
+    Sistem operasi bertanggung jawab dalam mengalokasikan dan mengelola penggunaan memori utama (RAM). Sistem operasi melacak bagian memori yang sedang digunakan, menentukan proses mana yang memperoleh alokasi memori, serta membebaskan memori ketika proses telah selesai dijalankan.
+
+    \item \textbf{Manajemen Sistem Berkas (\textit{File System})}
+    
+    Sistem operasi mengatur penyimpanan dan pengorganisasian data pada media penyimpanan. Hal ini mencakup pengelolaan direktori, berkas (\textit{file}), hak akses, serta alokasi dan dealokasi ruang penyimpanan.
+
+    \item \textbf{Manajemen Perangkat I/O}
+    
+    Sistem operasi mengontrol interaksi antara perangkat lunak dan perangkat keras \textit{input/output} seperti \textit{keyboard}, \textit{mouse}, \textit{printer}, dan perangkat penyimpanan. Pengelolaan ini dilakukan melalui \textit{driver} perangkat agar komunikasi berjalan secara terstandarisasi dan efisien.
+
+    \item \textbf{Keamanan dan Proteksi}
+    
+    Sistem operasi mengatur hak akses pengguna terhadap sumber daya sistem serta melindungi data dan program dari akses yang tidak sah. Mekanisme ini mencakup autentikasi pengguna, kontrol akses, dan isolasi antarproses.
+\end{enumerate}
+
+\subsection{Jenis-jenis Sistem Operasi}
+
+\begin{enumerate}
+    \item \textbf{\textit{Microsoft Windows}}
+    \vspace{0.5em}
+    \begin{center}
+        \includegraphics[width=0.15\textwidth]{Figure/01/windows.png}
+        \captionof{figure}{\textit{Microsoft Windows}}
+    \end{center}
+    \vspace{0.5em}
+    \textit{Microsoft Windows} merupakan sistem operasi yang dikembangkan oleh \textit{Microsoft} dan banyak digunakan pada komputer personal di seluruh dunia. \textit{Windows} dikenal dengan antarmuka grafis yang intuitif serta dukungan perangkat lunak yang sangat luas. Sistem operasi ini banyak digunakan dalam lingkungan perkantoran, pendidikan, dan industri karena kompatibilitasnya dengan berbagai perangkat keras dan aplikasi komersial.
+
+    \item \textbf{\textit{Linux}}
+    \vspace{0.5em}
+    \begin{center}
+        \includegraphics[width=0.15\textwidth]{Figure/01/linux.png}
+        \captionof{figure}{\textit{Linux}}
+    \end{center}
+    \vspace{0.5em}
+    \textit{Linux} adalah sistem operasi berbasis kernel \textit{Linux} yang bersifat \textit{open-source}. Sistem operasi ini dikenal karena stabilitas, keamanan, dan fleksibilitasnya dalam berbagai kebutuhan komputasi. \textit{Linux} banyak digunakan pada \textit{server}, sistem jaringan, dan lingkungan pengembangan perangkat lunak. Tersedia dalam berbagai distribusi seperti \textit{Ubuntu}, \textit{Debian}, dan \textit{Fedora}, yang dirancang untuk kebutuhan pengguna yang berbeda.
+
+    \item \textbf{\textit{UNIX}}
+    \vspace{0.5em}
+    \begin{center}
+        \includegraphics[width=0.15\textwidth]{Figure/01/unix.png}
+        \captionof{figure}{\textit{UNIX}}
+    \end{center}
+    \vspace{0.5em}
+    \textit{UNIX} merupakan sistem operasi yang dikembangkan pada akhir tahun 1960-an dan menjadi dasar bagi banyak sistem operasi modern. \textit{UNIX} dirancang dengan konsep \textit{multiuser} dan \textit{multitasking} yang kuat, sehingga banyak digunakan dalam sistem komputasi skala besar dan lingkungan akademik. Arsitektur dan filosofi desain \textit{UNIX} memberikan pengaruh signifikan terhadap pengembangan \textit{Linux} dan \textit{macOS}.
+
+    \item \textbf{\textit{macOS}}
+    \vspace{0.5em}
+    \begin{center}
+        \includegraphics[width=0.15\textwidth]{Figure/01/logomac.png}
+        \captionof{figure}{\textit{macOS}}
+    \end{center}
+    \vspace{0.5em}
+    \textit{macOS} adalah sistem operasi yang dikembangkan oleh \textit{Apple} untuk perangkat komputer \textit{Macintosh}. Sistem operasi ini berbasis \textit{UNIX} dan dibangun di atas fondasi \textit{Darwin}, yaitu sistem operasi turunan \textit{BSD (Berkeley Software Distribution)}. \textit{Darwin} menggunakan kernel \textit{XNU} (\textit{X is Not UNIX}), yang merupakan kernel hibrida hasil penggabungan komponen \textit{Mach microkernel} dan elemen dari \textit{BSD}.
+\end{enumerate}
+
+\subsection{Antarmuka Sistem Operasi}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Figure/01/guidancli.png}
+    \caption{Antarmuka \textit{Graphical User Interface} (GUI) dan \textit{Command Line Interface} (CLI)}
+    \label{fig:gui-cli}
+\end{figure}
+
+\noindent
+Antarmuka sistem operasi merupakan mekanisme yang memungkinkan pengguna berinteraksi dengan sistem komputer. Melalui antarmuka ini, pengguna dapat memberikan perintah, menjalankan aplikasi, serta mengakses sumber daya sistem. Secara umum, terdapat dua bentuk utama antarmuka, yaitu \textit{Graphical User Interface} (GUI) dan \textit{Command Line Interface} (CLI).
+
+GUI menggunakan elemen visual seperti jendela (\textit{window}), ikon, menu, dan tombol sehingga lebih intuitif dan mudah digunakan, terutama oleh pengguna pemula.
+
+Sementara itu, CLI memungkinkan interaksi melalui perintah berbasis teks dengan mengetikkan instruksi tertentu untuk menjalankan program, mengelola berkas, dan mengakses konfigurasi sistem. CLI banyak digunakan pada lingkungan \textit{server}, administrasi sistem, dan pengembangan perangkat lunak karena lebih efisien, fleksibel, serta mendukung automasi melalui skrip. GUI unggul dalam kemudahan penggunaan, sedangkan CLI memberikan kontrol yang lebih detail terhadap sistem.
+
+\subsection{\textit{Virtual Machine}}
+
+\noindent
+\textit{Virtual Machine} (VM) adalah representasi komputer secara virtual yang berjalan di atas sistem operasi utama melalui teknologi virtualisasi. Dengan pendekatan ini, satu perangkat keras fisik dapat menjalankan lebih dari satu sistem operasi secara bersamaan. Secara konsep, VM dapat dipahami sebagai ``komputer di dalam komputer''. Sistem operasi utama disebut \textit{Host Operating System}, sedangkan sistem operasi di dalam VM disebut \textit{Guest Operating System}. Proses virtualisasi tersebut dikelola oleh perangkat lunak yang disebut \textit{hypervisor}. Dalam pembelajaran sistem operasi, VM berguna karena menyediakan lingkungan terisolasi untuk eksperimen, instalasi, dan konfigurasi tanpa mengganggu sistem utama \cite{prasetiyo2024mesinvirtual}.
+
+\vspace{0.5em}
+\noindent
+\textit{Virtual Machine} umum dimanfaatkan untuk:
+\begin{enumerate}
+    \item Pengujian perangkat lunak.
+    \item Simulasi instalasi sistem operasi.
+    \item Keamanan dan \textit{sandboxing}.
+    \item Pengembangan dan penelitian sistem.
+\end{enumerate}
+
+\subsection{Jenis-jenis \textit{Virtual Machine}}
+
+Terdapat berbagai perangkat lunak virtualisasi yang digunakan untuk menjalankan mesin virtual. Beberapa di antaranya adalah sebagai berikut:
+
+\begin{enumerate}
+    \item \textbf{\textit{Oracle VM VirtualBox}}
+    \vspace{0.5em}
+    \begin{center}
+        \includegraphics[width=0.2\textwidth]{Figure/01/virtualbox.png}
+        \captionof{figure}{\textit{Oracle VM VirtualBox}}
+    \end{center}
+    \vspace{0.5em}
+    \textit{Oracle VM VirtualBox} merupakan perangkat lunak virtualisasi yang memungkinkan pengguna menjalankan sistem operasi tambahan di dalam sistem operasi utama. Sebagai contoh, pengguna dengan sistem operasi \textit{Windows} dapat menjalankan \textit{Linux} di dalamnya tanpa mengubah konfigurasi sistem utama. \textit{VirtualBox} banyak digunakan dalam lingkungan pendidikan karena bersifat gratis dan relatif mudah digunakan.
+
+    \item \textbf{\textit{Parallels Desktop}}
+    
+    \textit{Parallels Desktop} adalah perangkat lunak virtualisasi yang dirancang khusus untuk komputer \textit{Macintosh} berbasis prosesor \textit{Intel} maupun \textit{Apple Silicon}. Perangkat lunak ini memungkinkan pengguna \textit{macOS} menjalankan sistem operasi lain seperti \textit{Windows} secara bersamaan dalam satu perangkat.
+
+    \item \textbf{\textit{VMware}}
+    
+    \textit{VMware Workstation} merupakan perangkat lunak virtualisasi untuk arsitektur x86 dan x86-64. \textit{VMware} memungkinkan pembuatan beberapa mesin virtual yang dapat dijalankan secara simultan. Produk \textit{VMware} banyak digunakan dalam lingkungan profesional dan industri karena stabilitas serta fitur manajemen yang lengkap.
+
+    \item \textbf{\textit{QEMU}}
+    
+    \textit{QEMU} (\textit{Quick Emulator}) adalah perangkat lunak virtualisasi dan emulasi yang bersifat \textit{open-source}. \textit{QEMU} mampu melakukan emulasi berbagai arsitektur prosesor serta menjalankan sistem operasi tamu pada lingkungan yang berbeda. \textit{QEMU} sering digunakan dalam pengembangan sistem operasi dan penelitian karena fleksibilitasnya yang tinggi.
+
+    \item \textbf{\textit{Microsoft Virtual PC}}
+    
+    \textit{Microsoft Virtual PC} merupakan perangkat lunak virtualisasi yang dikembangkan oleh \textit{Microsoft} untuk sistem operasi \textit{Windows}. Perangkat lunak ini memungkinkan pengguna menjalankan sistem operasi lain di dalam lingkungan \textit{Windows}. Meskipun kini telah digantikan oleh teknologi lain seperti \textit{Hyper-V}, \textit{Microsoft Virtual PC} menjadi salah satu pelopor virtualisasi pada platform \textit{Windows}.
+
+    \item \textbf{\textit{Xen}}
+    
+    \textit{Xen} adalah \textit{Virtual Machine Monitor} (VMM) yang dikembangkan sebagai proyek penelitian di \textit{University of Cambridge}. \textit{Xen} banyak digunakan dalam lingkungan \textit{server} dan komputasi awan karena mendukung virtualisasi dengan performa tinggi.
+
+    \item \textbf{\textit{KVM} (\textit{Kernel-based Virtual Machine})}
+    
+    \textit{KVM} adalah teknologi virtualisasi yang terintegrasi langsung ke dalam kernel \textit{Linux}. \textit{KVM} menyediakan virtualisasi penuh untuk sistem berbasis x86 dan banyak digunakan pada \textit{server Linux} serta layanan komputasi awan.
+
+    \item \textbf{\textit{OpenStack}}
+    
+    \textit{OpenStack} merupakan arsitektur layanan \textit{Infrastructure as a Service} (IaaS) yang mendukung berbagai \textit{hypervisor} seperti \textit{KVM}, \textit{VMware}, \textit{Xen}, dan \textit{QEMU}. \textit{OpenStack} digunakan dalam pengelolaan infrastruktur komputasi awan berskala besar.
+\end{enumerate}

@@ -1,0 +1,200 @@
+% ============================================================
+%  Modul 4 — Automasi dengan Bash Scripting
+% ============================================================
+
+\chapter{Automasi dengan Bash Scripting}
+\label{chap:modul-04}
+
+% --- 1. Tujuan dan Output Praktikum ---
+\section{Tujuan dan Output Praktikum}
+
+\subsection{Tujuan Praktikum}
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+\begin{enumerate}
+    \item Menjelaskan konsep dan peran \textit{shell scripting} dalam automasi sistem operasi.
+    \item Menerapkan sintaks dasar \textit{bash}, termasuk deklarasi \textit{shebang} dan penggunaan variabel.
+    \item Membuat \textit{shell script} (\texttt{.sh}) yang menggabungkan perintah dasar Linux (\texttt{mkdir}, \texttt{cp}, \texttt{cat}) \cite{shotts2019linux}.
+    \item Mengonfigurasi hak akses eksekusi (\textit{execute permissions}) dan menjalankan skrip secara mandiri.
+\end{enumerate}
+
+\subsection{Output Praktikum}
+Pada akhir praktikum ini, mahasiswa diharapkan menghasilkan luaran berupa:
+\begin{itemize}
+    \item Berkas \textit{shell script} (\texttt{.sh}) berisi instruksi automasi \textit{backup}.
+    \item Direktori \textit{backup} yang terbentuk secara otomatis hasil dari eksekusi skrip.
+    \item Dokumentasi verifikasi keberhasilan modifikasi izin \textit{executable} pada skrip.
+\end{itemize}
+
+% --- 2. Dasar Teori ---
+\newpage
+\section{Dasar Teori}
+
+\subsection{Konsep \textit{Shell Scripting}}
+\textit{Shell Scripting} adalah proses penggabungan serangkaian instruksi baris perintah (CLI) ke dalam sebuah berkas teks murni yang nantinya akan dieksekusi secara otomatis oleh penerjemah sistem (\textit{shell}). Pada Linux, setiap perintah dieksekusi melalui \textit{shell}, yaitu program yang menyediakan lingkungan kerja bagi pengguna untuk berinteraksi dengan sistem operasi \cite{robbins2005classic}. 
+
+Secara analogi, bayangkan sistem operasi Linux Anda sebagai seorang koki. Mengetik perintah satu per satu di terminal ibarat Anda berdiri di dapur dan mendiktekan instruksi memasak kalimat demi kalimat. Hal ini efisien untuk masakan sederhana, namun melelahkan untuk tugas rumit. Sebaliknya, \textit{Shell Scripting} ibarat Anda menyusun "Resep Masakan" utuh di secarik kertas, di mana instruksi seperti menyalin berkas (\texttt{cp}) atau memindahkan direktori (\texttt{mv}) dapat dijalankan secara mandiri dan konsisten dari awal hingga selesai \cite{das2012unix}.
+
+\subsection{Struktur \textit{Shell Script}}
+
+
+
+Sebuah \textit{shell script} yang terstandarisasi selalu diawali dengan rangkaian karakter khusus yang disebut \textbf{Shebang} (\texttt{\#!/bin/bash}). Baris pertama ini adalah pengarah yang memberitahu \textit{kernel} sistem operasi tentang program mana yang harus dipanggil untuk memproses baris-baris instruksi di bawahnya.
+
+Untuk menyimpan data yang dinamis di dalam skrip, digunakan \textbf{variabel}. Variabel bertindak sebagai "kotak wadah berlabel". Alih-alih mengingat dan mengetikkan teks \textit{path} direktori yang panjang berkali-kali, pengguna cukup menyimpan teks tersebut ke dalam sebuah variabel dan hanya memanggil namanya saja saat kode dieksekusi.
+
+\subsection{Automasi dan Hak Eksekusi}
+Tugas administrasi yang paling sering dijadikan kandidat automasi adalah pencadangan (\textit{backup}) direktori. Namun, berkas skrip teks biasa tidak akan pernah bisa dijalankan sebagai program langsung oleh Linux demi meminimalisasi insiden keamanan. 
+
+Pengguna harus secara eksplisit menambahkan hak akses eksekusi (\textit{execute permissions}) menggunakan sintaks modifikasi pada perintah \texttt{chmod}. Jika eksekusi gagal, pastikan kembali apakah skrip tersebut dieksekusi pada tingkatan \textit{user} biasa (\texttt{\$}) atau membutuhkan privilese \textit{root} (\texttt{\#}) menggunakan perintah \texttt{sudo} \cite{shotts2019linux}.
+
+Tabel \ref{tab:m04-dasar-teori} merangkum hal-hal penting terkait operasi \textit{shell scripting}.
+
+\begin{table}[H]
+    \caption{Tabel Ringkasan Operasi \textit{Shell Scripting}}
+    \label{tab:m04-dasar-teori}
+    \centering
+    \begin{tabular}{|l|p{10cm}|}
+        \hline
+        \textbf{Sintaks} & \textbf{Penjelasan Singkat} \\ \hline
+        \texttt{\#!/bin/bash} & \textit{Shebang}, wajib berada di baris pertama skrip. \\ \hline
+        \texttt{NAMA="Data"} & Deklarasi variabel (tanpa spasi di antara tanda sama dengan). \\ \hline
+        \texttt{echo} & Menampilkan \textit{string} atau isi variabel ke layar terminal. \\ \hline
+        \texttt{cp -r} & Menyalin direktori beserta seluruh isinya secara rekursif. \\ \hline
+        \texttt{chmod +x} & Menambahkan hak eksekusi pada berkas. \\ \hline
+        \texttt{./skrip.sh} & Menjalankan skrip di lokasi \textit{Current Directory} saat ini. \\ \hline
+    \end{tabular}
+\end{table}
+
+% --- 3. Alat dan Bahan ---
+\newpage
+\section{Alat dan Bahan}
+\label{sec:m04-alat-bahan}
+
+\subsection{Perangkat Keras}
+\begin{itemize}
+	\item Laptop atau PC dengan prosesor minimal \textit{dual-core}.
+	\item RAM minimal 4 GB (disarankan 8 GB untuk kinerja optimal).
+	\item Ruang penyimpanan kosong minimal 25 GB.
+\end{itemize}
+
+\subsection{Perangkat Lunak}
+\begin{itemize}
+	\item Mesin Virtual Ubuntu (Guest OS) yang telah diinstal pada pertemuan sebelumnya.
+\end{itemize}
+
+% --- 4. Langkah-Langkah Praktikum ---
+\newpage
+\section{Langkah-Langkah Praktikum}
+
+Berikut adalah tahapan-tahapan yang harus Anda selesaikan secara berurutan selama praktikum berlangsung:
+
+\begin{enumerate}
+    \item \textbf{Persiapan Data Uji}
+    
+    Untuk mensimulasikan proses \textit{backup}, kita perlu membuat struktur data uji menggunakan perintah pembuatan direktori (\texttt{mkdir}).
+    \begin{enumerate}
+        \item Buka terminal Linux dengan \texttt{Ctrl+Alt+T}, kemudian siapkan direktori target.
+        \begin{lstlisting}[language=bash, caption={Menyiapkan direktori uji}]
+    $ mkdir Data_Penting
+    $ echo "Simulasi data keuangan." > Data_Penting/keuangan.txt
+    $ echo "Simulasi daftar mahasiswa." > Data_Penting/mahasiswa.txt
+        \end{lstlisting}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.75\textwidth]{Figure/04/gambar10.png}
+            \caption{Proses penyiapan direktori dan data simulasi untuk target \textit{backup}.}
+            \label{fig:m04-gambar10}
+        \end{figure}
+    \end{enumerate}
+
+    \vspace{1em}
+    \item \textbf{Penulisan Skrip Bash Sederhana}
+    
+    Pada tahap ini, Anda akan menyusun logika program untuk automasi.
+    \begin{enumerate}
+        \item Gunakan editor teks \texttt{nano} untuk membuat berkas berakhiran \texttt{.sh}.
+        \begin{lstlisting}[language=bash, caption={Membuka editor nano}]
+    $ nano script_backup.sh
+        \end{lstlisting}
+        
+        \item Di dalam \textit{workspace nano}, ketikkan baris skrip di bawah ini. Jika sudah, simpan dengan menekan \texttt{Ctrl+O}, tekan \texttt{Enter}, lalu \texttt{Ctrl+X} untuk menutup editor.
+        \begin{lstlisting}[language=bash, caption={Struktur Skrip Automasi Backup Sederhana}]
+    #!/bin/bash
+    # Automasi proses duplikasi keamanan data
+    
+    SUMBER="Data_Penting"
+    TUJUAN="Backup_$(date +%F)"
+    
+    echo "Sedang menyalin direktori: $SUMBER..."
+    
+    # Eksekusi proses copy rekursif ke variabel TUJUAN
+    cp -r $SUMBER $TUJUAN
+    
+    echo "Proses backup selesai! Tersimpan di: $TUJUAN"
+        \end{lstlisting}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.75\textwidth]{Figure/04/gambar11.png}
+            \caption{Tampilan penulisan skrip \textit{backup} memanfaatkan teks editor CLI terintegrasi.}
+            \label{fig:m04-gambar11}
+        \end{figure}
+    \end{enumerate}
+
+    \vspace{1em}
+    \item \textbf{Modifikasi Izin dan Eksekusi Skrip}
+    
+    Tahap terakhir adalah memberikan otorisasi agar program dapat dijalankan oleh sistem.
+    \begin{enumerate}
+        \item Berikan izin \textit{executable} pada berkas skrip menggunakan \texttt{chmod}. 
+        \begin{lstlisting}[language=bash, caption={Memberikan izin eksekusi ke berkas script}]
+    # Mengecek metadata dan izin berkas awal sebelum dimodifikasi
+    $ ls -l script_backup.sh
+    
+    # Menambahkan modifier executable (+x)
+    $ chmod +x script_backup.sh
+    
+    # Mengecek kembali, penanda berkas biasanya akan berubah warna
+    $ ls -l script_backup.sh
+        \end{lstlisting}
+        
+        \item Panggil nama skrip tersebut dan verifikasi eksekusinya.
+        \begin{lstlisting}[language=bash, caption={Eksekusi program bash}]
+    # Menjalankan script di direktori saat ini (./)
+    $ ./script_backup.sh
+    
+    # Memeriksa hasil backup menggunakan perintah ls
+    $ ls -l
+        \end{lstlisting}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.75\textwidth]{Figure/04/gambar12.png}
+            \caption{Validasi proses modifikasi izin eksekusi dan keberhasilan eksekusi automasi pada terminal.}
+            \label{fig:m04-gambar12}
+        \end{figure}
+    \end{enumerate}
+\end{enumerate}
+
+% --- 5. Tugas Mandiri ---
+\newpage
+\section{Latihan}
+\label{sec:m04-hands-on}
+
+Pada bagian ini, setiap mahasiswa wajib mengerjakan tugas praktik mandiri sebagai berikut:
+
+    \begin{enumerate}
+    \item Buatlah struktur direktori berikut secara berurutan melalui terminal:
+    \begin{itemize}
+        \item Buat dua direktori: \texttt{mahasiswa\_namaanda} dan \texttt{matakuliah\_namaanda}.
+        \item Di dalam \texttt{mahasiswa\_namaanda}, buat berkas \texttt{datadiri\_namaanda.txt} menggunakan \texttt{nano}. Isi dengan: Nama, NIM, Program Studi, dan Angkatan.
+        \item Di dalam \texttt{matakuliah\_namaanda}, buat berkas \texttt{sistemoperasi\_namaanda.txt}. Isi dengan: Nama, Kelas, dan Kode Mata Kuliah IF.
+    \end{itemize}
+    \item Pindahkan direktori \texttt{matakuliah\_namaanda} ke dalam \texttt{mahasiswa\_namaanda} menggunakan \texttt{mv}. Setelah itu, tampilkan isi \texttt{sistemoperasi\_namaanda.txt} dengan \texttt{cat}.
+    \item Demonstrasikan modifikasi hak akses dengan menghapus izin \textit{write} (\texttt{w}) pada berkas \texttt{datadiri\_namaanda.txt} menggunakan \texttt{chmod}.
+    \item Susun \textit{shell script} bernama \texttt{backup\_tugas.sh} untuk mengotomatisasi penyalinan (\texttt{cp -r}) direktori \texttt{mahasiswa\_namaanda} ke direktori baru bernama \texttt{Arsip\_namaanda}.
+    \item Berikan izin eksekusi (\texttt{chmod +x}) dan jalankan skrip tersebut. Verifikasi hasilnya menggunakan \texttt{ls} untuk memastikan direktori arsip terbentuk utuh.
+    \item Dokumentasikan setiap langkah dan perintah eksekusi terminal secara berurutan (wajib disertai bukti seperti tangkapan layar).
+    \item Menyusun laporan praktikum sesuai template resmi pada GitHub IF ITERA:
+    \url{https://github.com/informatika-itera/IF25-12007-Sistem-Operasi/tree/main/Hands-On}
+\end{enumerate}
+
+Laporan \textbf{wajib} disusun menggunakan \LaTeX.

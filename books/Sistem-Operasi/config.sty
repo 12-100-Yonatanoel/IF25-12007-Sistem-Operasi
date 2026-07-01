@@ -1,0 +1,238 @@
+%%%%%%%%%%%%%%%%%%%%%%%%% Credit %%%%%%%%%%%%%%%%%%%%%%%%
+% template asli dibuat oleh martin.manullang@if.itera.ac.id
+% untuk dipergunakan oleh seluruh sivitas akademik itera.
+% versi ini diturunkan untuk buku ajar "Sistem Operasi" (IF25-12007),
+% disusun ulang dari Modul Praktikum dan Hands-On IF25-12007.
+
+%%%%%%%%%%%%%%%%%%%%%%%%% ENCODING & FONT %%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{inter}                          % Modern sans-serif (Inter)
+\renewcommand{\familydefault}{\sfdefault}   % Sans-serif as default
+\usepackage{inconsolata}                    % Clean monospace for code
+\usepackage{microtype}                      % Letter spacing & microtypography
+\usepackage[a5paper,twoside,
+    inner=1.8cm,
+    outer=1.35cm,
+    top=1.8cm,
+    bottom=1.8cm,
+    bindingoffset=0.45cm,
+    headheight=14pt,
+    headsep=0.45cm,
+    footskip=0.7cm
+]{geometry}
+\usepackage{setspace}
+\setstretch{1.2}                            % Tighter spacing for A5
+\usepackage[parfill]{parskip}               % Space between paragraphs, no indent
+
+%%%%%%%%%%%%%%%%%%%%%%%%% COLORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{xcolor}
+% --- Primary palette ---
+\definecolor{accent}{HTML}{2563EB}          % Vivid blue
+\definecolor{accentdark}{HTML}{1E40AF}      % Deep blue for headings
+\definecolor{accentlight}{HTML}{DBEAFE}     % Pale blue tint
+\definecolor{textmain}{HTML}{1F2937}        % Near-black body text
+\definecolor{textsec}{HTML}{6B7280}         % Gray secondary text
+% --- Code palette ---
+\definecolor{codebg}{HTML}{F8FAFC}
+\definecolor{codeborder}{HTML}{E2E8F0}
+\definecolor{codegreen}{HTML}{059669}
+\definecolor{codepurple}{HTML}{7C3AED}
+\definecolor{codegray}{HTML}{94A3B8}
+\definecolor{codeorange}{HTML}{EA580C}
+\color{textmain}                            % Set default text color
+
+%%%%%%%%%%%%%%%%%%%%%%%%% HEADINGS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{titlesec}
+\usepackage{titletoc}
+
+\titleformat{\chapter}[display]
+    {\normalfont\LARGE\bfseries\color{accentdark}}
+    {\large\color{textsec}\MakeUppercase{\chaptertitlename}~\thechapter}
+    {8pt}
+    {\color{accent}\rule{\textwidth}{1.2pt}\\[5pt]\LARGE}
+    [\vspace{-5pt}]
+
+\titleformat{\section}
+    {\normalfont\Large\bfseries\color{accentdark}}
+    {\thesection}{10pt}{}
+    [\vspace{-3pt}{\color{accent}\rule{0.28\textwidth}{1.2pt}}]
+
+\titleformat{\subsection}
+    {\normalfont\normalsize\bfseries\color{textmain}}
+    {\thesubsection}{8pt}{}
+
+\titleformat{\subsubsection}
+    {\normalfont\small\bfseries\color{textmain}}
+    {\thesubsubsection}{6pt}{}
+
+\titlespacing*{\chapter}{0pt}{-12pt}{20pt}
+\titlespacing*{\section}{0pt}{20pt}{10pt}
+\titlespacing*{\subsection}{0pt}{14pt}{8pt}
+\titlespacing*{\subsubsection}{0pt}{10pt}{4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% HEADER & FOOTER %%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\fancypagestyle{main}{%
+    \fancyhf{}%
+    \fancyhead[LE,RO]{\small\color{textsec}\thepage}%
+    \fancyhead[LO]{\small\color{textsec}\nouppercase{\rightmark}}%
+    \fancyhead[RE]{\small\color{textsec}\nouppercase{\leftmark}}%
+    \renewcommand{\headrulewidth}{0.4pt}%
+    \renewcommand{\footrulewidth}{0pt}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% GRAPHICS & TABLES %%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup[table]{name=Tabel, font={sf,small}, labelfont={bf,color=accentdark}}
+\captionsetup[figure]{name=Gambar, font={sf,small}, labelfont={bf,color=accentdark}}
+\usepackage{subcaption}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{tabulary}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{array}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% CODE LISTINGS %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings}
+\lstdefinestyle{modern}{
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{accent}\bfseries,
+    numberstyle=\scriptsize\color{codegray},
+    stringstyle=\color{codeorange},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=6pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{codeborder},
+    xleftmargin=12pt,
+    framexleftmargin=12pt,
+    aboveskip=12pt,
+    belowskip=10pt
+}
+\lstset{style=modern}
+\renewcommand{\lstlistingname}{Kode}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% HYPERLINKS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=accentdark,
+    citecolor=accentdark,
+    urlcolor=accent,
+    pdfborder={0 0 0}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% LISTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{enumitem}
+\setlist{itemsep=4pt, parsep=2pt, topsep=8pt}
+\setlist[itemize]{label=\textcolor{accent}{\textbullet}}
+\setlist[enumerate]{font=\bfseries\color{accent}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% TOC STYLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\contentsmargin{0pt}
+\titlecontents{chapter}[0em]
+    {\addvspace{10pt}\normalsize\bfseries\color{accentdark}}
+    {\contentslabel{1.8em}}
+    {\hspace*{-1.8em}}
+    {\hfill\contentspage}
+\titlecontents{section}[1.8em]
+    {\addvspace{2pt}\small\color{textmain}}
+    {\contentslabel{2.2em}}
+    {\hspace*{-2.2em}}
+    {\titlerule*[6pt]{.}\contentspage}
+\titlecontents{subsection}[4.2em]
+    {\footnotesize\color{textsec}}
+    {\contentslabel{2.8em}}
+    {\hspace*{-2.8em}}
+    {\titlerule*[6pt]{.}\contentspage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% MISC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[all]{xy}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage{lipsum}
+\usepackage{etoolbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE ends HERE %%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Identitas Buku %%%%%%%%%%%%%%%%%%%%%%%%%
+% Ubah nilai-nilai di bawah ini sesuai dengan kebutuhan.
+
+\newcommand{\bookTitle}{Sistem Operasi: Dari Teori ke Implementasi Kernel}
+\newcommand{\bookSubtitle}{Disusun dari Modul Praktikum dan Hands-On IF25-12007}
+
+\newcommand{\courseName}{Sistem Operasi}
+\newcommand{\courseCode}{IF25-12007}
+\newcommand{\semester}{Genap 2025/2026}
+\newcommand{\institution}{Institut Teknologi Sumatera}
+
+% --- Dosen Pengampu ---
+\newcommand{\dosenPengampuI}{Martin Clinton Tosima Manullang, S.T., M.T., Ph.D.}
+\newcommand{\dosenPengampuII}{Ilham Firman Ashari, S.Kom., M.T}
+\newcommand{\dosenPengampuIII}{I Wayan Wiprayoga Wisesa, S.Kom., M.Kom.}
+\newcommand{\dosenPengampuIV}{Eko Dwi Nugroho, S.Kom., M.Cs.}
+
+% --- Asisten Praktikum ---
+\newcommand{\asistenNameI}{Ahmat Prayoga Sembiring}
+\newcommand{\asistenNimI}{123140053}
+
+\newcommand{\asistenNameII}{Andryano Shevchenko Limbong}
+\newcommand{\asistenNimII}{123140205}
+
+\newcommand{\asistenNameIII}{Aziz Kurniawan}
+\newcommand{\asistenNimIII}{122140097}
+
+\newcommand{\asistenNameIV}{Dito Rifki Irawan}
+\newcommand{\asistenNimIV}{122140153}
+
+\newcommand{\asistenNameV}{Ebentua Philippus Limbong}
+\newcommand{\asistenNimV}{123140086}
+
+\newcommand{\asistenNameVI}{Elsa Elisa Yohana Sianturi}
+\newcommand{\asistenNimVI}{122140135}
+
+\newcommand{\asistenNameVII}{Fathan Andi Kartagama}
+\newcommand{\asistenNimVII}{122140055}
+
+\newcommand{\asistenNameVIII}{Miftahul Khoiriyah}
+\newcommand{\asistenNimVIII}{123140064}
+
+\newcommand{\asistenNameIX}{Muhammad Bintang Al-Fasya}
+\newcommand{\asistenNimIX}{123140098}
+
+\newcommand{\asistenNameX}{Muhammad Fadhil Zurani}
+\newcommand{\asistenNimX}{122140146}
+
+\newcommand{\asistenNameXI}{Reza Chairul Manam}
+\newcommand{\asistenNimXI}{120140086}
+
+\newcommand{\asistenNameXII}{Stevanus Cahya Anggara}
+\newcommand{\asistenNimXII}{123140038}
+
+\newcommand{\asistenNameXIII}{Varasina Farmadani}
+\newcommand{\asistenNimXIII}{123140107}
+
+\newcommand{\asistenNameXIV}{Zakhi Algifari}
+\newcommand{\asistenNimXIV}{122140198}
+
+%%%%%%%%%%%%%%%%%%% Theorem-style Environments %%%%%%%%%%%%%%%%%%%%
+\newtheorem{thm}{Teorema}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{defn}[thm]{Definisi}
+\newtheorem{exa}[thm]{Contoh}
+\newtheorem{rem}[thm]{Catatan}
+\newtheorem{coro}[thm]{Korolari}
+\newtheorem{quest}{Pertanyaan}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
