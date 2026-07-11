@@ -436,10 +436,12 @@ tid_t thread_create(const char *name, int priority,
 	      \begin{table}[!ht]
 		      \caption{Perbandingan status \texttt{THREAD\_READY} dan \texttt{THREAD\_BLOCKED}}
 		      \label{tab:h04-thread-status}
-		      \centering
-		      \begin{tabulary}{\linewidth}{|L|L|L|}
+		      \small
+		      \begin{tabularx}{\linewidth}{|X|X|X|}
 			      \hline
-			      \textbf{Aspek} & \textbf{THREAD\_READY} & \textbf{THREAD\_BLOCKED} \\
+			      \textbf{Aspek} &
+			      \makecell[l]{\textbf{THREAD\_}\\\textbf{READY}} &
+			      \makecell[l]{\textbf{THREAD\_}\\\textbf{BLOCKED}} \\
 			      \hline
 			      Siapa yang menetapkan? & \textit{[Isi]} & \textit{[Isi]} \\
 			      \hline
@@ -449,7 +451,7 @@ tid_t thread_create(const char *name, int priority,
 			      \hline
 			      Contoh penggunaan & \textit{[Isi]} & \textit{[Isi]} \\
 			      \hline
-		      \end{tabulary}
+		      \end{tabularx}
 	      \end{table}
 
 \end{enumerate}

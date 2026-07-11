@@ -88,15 +88,15 @@ Kolom pertama (\texttt{-rw-r--r--}) adalah \textit{permission string} 10 karakte
 \begin{table}[H]
 	\caption{Breakdown \textit{Permission String} pada Output \texttt{ls -l}}
 	\label{tab:ls-l-breakdown}
-	\centering
-	\begin{tabular}{|c|c|l|}
+	\small
+	\begin{tabularx}{\textwidth}{|c|c|X|}
 		\hline
-		\textbf{Posisi} & \textbf{Contoh} & \textbf{Keterangan}                                                                    \\ \hline
-		1               & \texttt{-}      & Tipe berkas: \texttt{-} = berkas biasa, \texttt{d} = direktori                         \\ \hline
+		\textbf{Posisi} & \textbf{Contoh} & \textbf{Keterangan} \\ \hline
+		1               & \texttt{-}      & Tipe berkas: \texttt{-} = berkas biasa, \texttt{d} = direktori \\ \hline
 		2--4            & \texttt{rw-}    & Hak akses \textit{Owner}: \texttt{r}=baca, \texttt{w}=tulis, \texttt{-}=tanpa eksekusi \\ \hline
-		5--7            & \texttt{r--}    & Hak akses \textit{Group}: hanya baca                                                   \\ \hline
-		8--10           & \texttt{r--}    & Hak akses \textit{Others}: hanya baca                                                  \\ \hline
-	\end{tabular}
+		5--7            & \texttt{r--}    & Hak akses \textit{Group}: hanya baca \\ \hline
+		8--10           & \texttt{r--}    & Hak akses \textit{Others}: hanya baca \\ \hline
+	\end{tabularx}
 \end{table}
 
 Huruf yang tampil menandakan izin aktif, sedangkan tanda \texttt{-} berarti izin tersebut tidak diberikan. Sebagai contoh, \texttt{rwxr-x---} berarti: \textit{owner} memiliki akses penuh (\texttt{rwx}), \textit{group} hanya bisa baca dan eksekusi (\texttt{r-x}), sementara \textit{others} tidak memiliki hak akses sama sekali (\texttt{---}).
@@ -115,26 +115,26 @@ Tabel \ref{tab:m03-dasar-teori} merangkum berbagai perintah esensial yang akan d
 \begin{table}[H]
 	\caption{Tabel Ringkasan Perintah Dasar Linux}
 	\label{tab:m03-dasar-teori}
-	\centering
-	\begin{tabular}{|l|p{10cm}|}
+	\small
+	\begin{tabularx}{\textwidth}{|l|X|}
 		\hline
-		\textbf{Perintah} & \textbf{Deskripsi Singkat}                                                                                                       \\ \hline
-		\texttt{ls}       & Melihat daftar file dan folder di dalam direktori.                                                                               \\ \hline
-		\texttt{ls -l}    & Menampilkan daftar file beserta detail hak akses, pemilik, ukuran, dan tanggal modifikasi.                                       \\ \hline
+		\textbf{Perintah} & \textbf{Deskripsi Singkat} \\ \hline
+		\texttt{ls}       & Melihat daftar file dan folder di dalam direktori. \\ \hline
+		\texttt{ls -l}    & Menampilkan daftar file beserta detail hak akses, pemilik, ukuran, dan tanggal modifikasi. \\ \hline
 		\texttt{ls -la}   & Sama seperti \texttt{ls -l}, tetapi juga menampilkan berkas tersembunyi (\textit{hidden files}) yang diawali titik (\texttt{.}). \\ \hline
-		\texttt{pwd}      & Memeriksa \textit{path} atau alamat direktori saat ini.                                                                          \\ \hline
-		\texttt{cd}       & Berpindah ke direktori lain.                                                                                                     \\ \hline
-		\texttt{mkdir}    & Membuat direktori (folder) baru.                                                                                                 \\ \hline
-		\texttt{rm}       & Menghapus file atau direktori.                                                                                                   \\ \hline
-		\texttt{cp}       & Menyalin file/direktori dari satu lokasi ke lokasi lain.                                                                         \\ \hline
-		\texttt{mv}       & Memindahkan file atau mengubah nama file (\textit{rename}).                                                                      \\ \hline
-		\texttt{touch}    & Membuat file teks kosong.                                                                                                        \\ \hline
-		\texttt{cat}      & Menampilkan isi file teks langsung ke layar terminal.                                                                            \\ \hline
-		\texttt{nano}     & Membuka teks editor bawaan terminal.                                                                                             \\ \hline
-		\texttt{ps}       & Menampilkan daftar proses yang sedang berjalan.                                                                                  \\ \hline
-		\texttt{kill}     & Menghentikan proses yang sedang berjalan.                                                                                        \\ \hline
-		\texttt{chmod}    & Mengubah hak akses (\textit{r, w, x}) sebuah file/direktori.                                                                     \\ \hline
-	\end{tabular}
+		\texttt{pwd}      & Memeriksa \textit{path} atau alamat direktori saat ini. \\ \hline
+		\texttt{cd}       & Berpindah ke direktori lain. \\ \hline
+		\texttt{mkdir}    & Membuat direktori (folder) baru. \\ \hline
+		\texttt{rm}       & Menghapus file atau direktori. \\ \hline
+		\texttt{cp}       & Menyalin file/direktori dari satu lokasi ke lokasi lain. \\ \hline
+		\texttt{mv}       & Memindahkan file atau mengubah nama file (\textit{rename}). \\ \hline
+		\texttt{touch}    & Membuat file teks kosong. \\ \hline
+		\texttt{cat}      & Menampilkan isi file teks langsung ke layar terminal. \\ \hline
+		\texttt{nano}     & Membuka teks editor bawaan terminal. \\ \hline
+		\texttt{ps}       & Menampilkan daftar proses yang sedang berjalan. \\ \hline
+		\texttt{kill}     & Menghentikan proses yang sedang berjalan. \\ \hline
+		\texttt{chmod}    & Mengubah hak akses (\textit{r, w, x}) sebuah file/direktori. \\ \hline
+	\end{tabularx}
 \end{table}
 
 % --- 3. Alat dan Bahan ---
@@ -317,14 +317,14 @@ Berikut adalah pesan kesalahan yang sering dijumpai selama praktikum beserta car
 \begin{table}[H]
 	\caption{Kesalahan Umum dan Cara Mengatasinya}
 	\label{tab:m03-troubleshooting}
-	\centering
-	\begin{tabular}{|p{5.5cm}|p{4cm}|p{4.5cm}|}
+	\small
+	\begin{tabularx}{\textwidth}{|>{{\ttfamily\small}}X|X|X|}
 		\hline
-		\textbf{Pesan Kesalahan}                                    & \textbf{Penyebab Umum}                                                                  & \textbf{Cara Mengatasi}                                                                                                                                   \\ \hline
-		\texttt{Permission denied}                                  & Anda tidak memiliki hak akses untuk membaca, menulis, atau menjalankan berkas tersebut. & Periksa permission dengan \texttt{ls -l}. Gunakan \texttt{chmod} untuk menyesuaikan, atau tambahkan \texttt{sudo} jika aksi memerlukan hak administratif. \\ \hline
-		\texttt{mkdir: cannot create directory 'data': File exists} & Direktori dengan nama yang sama sudah ada.                                              & Gunakan nama direktori lain, atau hapus direktori lama terlebih dahulu dengan \texttt{rm -r namadir}.                                                     \\ \hline
-		\texttt{No such file or directory}                          & Berkas atau direktori yang dituju tidak ditemukan di \textit{path} yang diberikan.      & Pastikan ejaan nama berkas benar. Gunakan \texttt{ls} untuk melihat isi direktori saat ini, dan \texttt{pwd} untuk mengecek lokasi Anda.                  \\ \hline
-		\texttt{sudo: command not found}                            & Perintah \texttt{sudo} tidak tersedia (jarang terjadi di Ubuntu).                       & Pastikan Anda menggunakan distribusi Ubuntu yang sudah dikonfigurasi. Hubungi asisten praktikum jika masalah berlanjut.                                   \\ \hline
-		\texttt{bash: nano: command not found}                      & Editor \texttt{nano} belum terpasang.                                                   & Pasang dengan perintah \texttt{sudo apt install nano}.                                                                                                    \\ \hline
-	\end{tabular}
+		\normalfont\textbf{Pesan Kesalahan} & \textbf{Penyebab Umum} & \textbf{Cara Mengatasi} \\ \hline
+		Permission denied & Anda tidak memiliki hak akses untuk membaca, menulis, atau menjalankan berkas tersebut. & Periksa permission dengan \texttt{ls -l}. Gunakan \texttt{chmod} untuk menyesuaikan, atau tambahkan \texttt{sudo} jika aksi memerlukan hak administratif. \\ \hline
+		mkdir: cannot create directory 'data': File exists & Direktori dengan nama yang sama sudah ada. & Gunakan nama direktori lain, atau hapus direktori lama terlebih dahulu dengan \texttt{rm -r namadir}. \\ \hline
+		No such file or directory & Berkas atau direktori yang dituju tidak ditemukan di \textit{path} yang diberikan. & Pastikan ejaan nama berkas benar. Gunakan \texttt{ls} untuk melihat isi direktori saat ini, dan \texttt{pwd} untuk mengecek lokasi Anda. \\ \hline
+		sudo: command not found & Perintah \texttt{sudo} tidak tersedia (jarang terjadi di Ubuntu). & Pastikan Anda menggunakan distribusi Ubuntu yang sudah dikonfigurasi. Hubungi asisten praktikum jika masalah berlanjut. \\ \hline
+		bash: nano: command not found & Editor \texttt{nano} belum terpasang. & Pasang dengan perintah \texttt{sudo apt install nano}. \\ \hline
+	\end{tabularx}
 \end{table}

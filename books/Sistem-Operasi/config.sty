@@ -90,10 +90,23 @@
 \usepackage{subcaption}
 \usepackage{placeins}
 \usepackage{float}
+\usepackage{tabularx}                       % Responsive tables with \textwidth
 \usepackage{tabulary}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{makecell}                       % Multi-line table headers
+% Allow line-breaks inside \texttt{} at underscores, slashes, and hyphens
+% Use renewrobustcmd (etoolbox) so it is NOT expanded in moving arguments
+% (.aux, .toc, bookmarks) — prevents "File ended while scanning \@writefile"
+\renewrobustcmd{\texttt}[1]{%
+    {\ttfamily\hyphenchar\font=`\-\relax
+     \let\texttt@us\_
+     \def\_{\texttt@us\discretionary{}{}{}}%
+     #1}%
+}
+% Fine-tune justification: allow slightly looser lines before overfull hbox
+\setlength{\emergencystretch}{3em}
 
 %%%%%%%%%%%%%%%%%%%%%%%%% CODE LISTINGS %%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{listings}
