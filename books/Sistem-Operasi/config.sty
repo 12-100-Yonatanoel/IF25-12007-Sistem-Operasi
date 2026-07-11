@@ -12,14 +12,14 @@
 \usepackage{inconsolata}                    % Clean monospace for code
 \usepackage{microtype}                      % Letter spacing & microtypography
 \usepackage[a5paper,twoside,
-    inner=1.8cm,
-    outer=1.35cm,
-    top=1.8cm,
-    bottom=1.8cm,
-    bindingoffset=0.45cm,
-    headheight=14pt,
-    headsep=0.45cm,
-    footskip=0.7cm
+    left=2cm,
+    right=2cm,
+    top=2cm,
+    bottom=2cm,
+    bindingoffset=0.5cm,
+    headheight=22pt,
+    headsep=0.4cm,
+    footskip=0.65cm
 ]{geometry}
 \usepackage{setspace}
 \setstretch{1.2}                            % Tighter spacing for A5
@@ -60,11 +60,11 @@
 
 \titleformat{\subsection}
     {\normalfont\normalsize\bfseries\color{textmain}}
-    {\thesubsection}{8pt}{}
+    {\thesubsection}{1em}{}
 
 \titleformat{\subsubsection}
     {\normalfont\small\bfseries\color{textmain}}
-    {\thesubsubsection}{6pt}{}
+    {\thesubsubsection}{0.8em}{}
 
 \titlespacing*{\chapter}{0pt}{-12pt}{20pt}
 \titlespacing*{\section}{0pt}{20pt}{10pt}
@@ -144,19 +144,19 @@
 \contentsmargin{0pt}
 \titlecontents{chapter}[0em]
     {\addvspace{10pt}\normalsize\bfseries\color{accentdark}}
-    {\contentslabel{1.8em}}
-    {\hspace*{-1.8em}}
+    {\contentslabel{2.2em}}
+    {\hspace*{-2.2em}}
     {\hfill\contentspage}
 \titlecontents{section}[1.8em]
     {\addvspace{2pt}\small\color{textmain}}
-    {\contentslabel{2.2em}}
-    {\hspace*{-2.2em}}
-    {\titlerule*[6pt]{.}\contentspage}
-\titlecontents{subsection}[4.2em]
+    {\contentslabel{2.5em}}
+    {\hspace*{-2.5em}}
+    {\titlerule*[3pt]{.}\contentspage}
+\titlecontents{subsection}[4.5em]
     {\footnotesize\color{textsec}}
-    {\contentslabel{2.8em}}
-    {\hspace*{-2.8em}}
-    {\titlerule*[6pt]{.}\contentspage}
+    {\contentslabel{3.5em}}
+    {\hspace*{-3.5em}}
+    {\titlerule*[3pt]{.}\contentspage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%% MISC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[all]{xy}
@@ -164,6 +164,7 @@
 \usepackage{verbatim}
 \usepackage{lipsum}
 \usepackage{etoolbox}
+\usepackage{pdfpages}
 
 %%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE ends HERE %%%%%%%%%%%%%%%%%%%%%%
 

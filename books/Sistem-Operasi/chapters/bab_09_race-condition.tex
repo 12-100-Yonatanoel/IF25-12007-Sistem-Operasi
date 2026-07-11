@@ -78,9 +78,9 @@ Jika lebih dari satu thread memasuki \textit{critical section} secara bersamaan,
 
 Terdapat tiga syarat yang harus dipenuhi oleh mekanisme proteksi \textit{critical section}:
 \begin{enumerate}
-	\item \textbf{Mutual Exclusion} --- Hanya satu \textit{thread} yang boleh berada di dalam \textit{critical section} pada satu waktu.
-	\item \textbf{Progress} --- Jika tidak ada \textit{thread} di dalam \textit{critical section}, \textit{thread} yang menunggu harus dapat segera masuk tanpa penundaan.
-	\item \textbf{Bounded Waiting} --- Setiap \textit{thread} yang menunggu harus dijamin akan mendapat giliran dalam waktu yang terbatas (tidak \textit{starving}).
+	\item \textbf{Mutual Exclusion}: Hanya satu \textit{thread} yang boleh berada di dalam \textit{critical section} pada satu waktu.
+	\item \textbf{Progress}: Jika tidak ada \textit{thread} di dalam \textit{critical section}, \textit{thread} yang menunggu harus dapat segera masuk tanpa penundaan.
+	\item \textbf{Bounded Waiting}: Setiap \textit{thread} yang menunggu harus dijamin akan mendapat giliran dalam waktu yang terbatas (tidak \textit{starving}).
 \end{enumerate}
 
 \subsection{Preemption dan Cooperative Scheduling}
@@ -91,8 +91,8 @@ Sebaliknya, pada \textit{cooperative scheduling}, sebuah \textit{thread} harus m
 \subsection{Producer-Consumer}
 \textit{Producer-Consumer problem} (atau \textit{Bounded-Buffer problem}) adalah skenario klasik dalam sistem operasi yang melibatkan dua jenis thread:
 \begin{itemize}
-	\item \textbf{Producer} --- \textit{thread} yang menghasilkan data dan menulisnya ke \textit{shared buffer}.
-	\item \textbf{Consumer} --- \textit{thread} yang mengonsumsi data dengan membacanya dari \textit{shared buffer}.
+	\item \textbf{Producer}: \textit{thread} yang menghasilkan data dan menulisnya ke \textit{shared buffer}.
+	\item \textbf{Consumer}: \textit{thread} yang mengonsumsi data dengan membacanya dari \textit{shared buffer}.
 \end{itemize}
 
 Masalah muncul ketika Producer dan Consumer mengakses \textit{shared buffer} tanpa koordinasi:

@@ -67,7 +67,6 @@ Ketika sinkronisasi diterapkan, \textit{thread} tidak hanya bergantian berjalan,
 
 Perbedaan \textit{Blocked} dengan \textit{busy waiting} sangat penting. Pada \textit{busy waiting}, \textit{thread} terus mengulang pengecekan sambil tetap menghabiskan siklus CPU. Pada pendekatan \textit{blocked}, \textit{thread} justru dikeluarkan dari antrean siap dan baru kembali ke \textit{ready queue} ketika \texttt{Signal} atau \texttt{Unlock} yang relevan terjadi. Model inilah yang lebih efisien dan dipakai dalam praktikum ini melalui pasangan fungsi \texttt{thread\_block()} dan \texttt{thread\_unblock()}.
 
-INS.POST 99:
 
 \noindent \textbf{Invariant dan Urutan Operasi yang Benar:} Pada \textit{bounded buffer}, nilai \texttt{sema\_empty} dan \texttt{sema\_full} harus selalu merepresentasikan jumlah slot kosong dan slot terisi secara konsisten. Karena itu, urutan operasi tidak boleh dibalik sembarangan. \textit{Producer} wajib memastikan slot kosong tersedia lebih dulu, baru memasuki \textit{critical section}. Setelah data benar-benar ditulis, barulah ia memberi sinyal bahwa jumlah data siap baca bertambah. \textit{Consumer} mengikuti pola kebalikannya: pastikan data tersedia, masuk ke area kritis, baca data, lalu umumkan bahwa satu slot kembali kosong. \textit{Mutex} saja tidak cukup menggantikan semaphore counting, karena penguncian hanya melindungi akses serentak, tetapi tidak menghitung kapasitas \textit{buffer}. Jika urutannya salah, sistem dapat menghasilkan jumlah hitung keliru, \textit{deadlock}, atau pembacaan data yang belum valid.
 
@@ -350,7 +349,7 @@ make run
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.85\textwidth]{Figure/10/1.jpeg}
-	\caption{Keluaran (\textit{output}) QEMU setelah implementasi sinkronisasi penuh --- Producer dan Consumer bergantian secara rapi, Mutex berhasil mengatasi jebakan Preemption.}
+	\caption{Keluaran (\textit{output}) QEMU setelah implementasi sinkronisasi penuh. Producer dan Consumer bergantian secara rapi, Mutex berhasil mengatasi jebakan Preemption.}
 	\label{fig:m10-sesi4}
 \end{figure}
 
@@ -362,7 +361,7 @@ make run
 Kerjakan tugas-tugas berikut secara berurutan mengikuti alur sesi pada Modul 9 dan Modul 10. Sertakan bukti berupa tangkapan layar (\textit{screenshot}) QEMU atau penggalan kode yang relevan pada setiap langkah yang diminta.
 
 % ============================================================
-\subsection{Sesi 1 — Menjalankan Demo Race Condition}
+\subsection{Sesi 1: Menjalankan Demo Race Condition}
 % ============================================================
 
 \subsubsection{Persiapan dan Kompilasi}
@@ -432,7 +431,7 @@ make run
 			      \hline
 			      \textbf{Langkah} & \textbf{Thread Aktif} & \textbf{Yang Terjadi} \\ \hline
 			      1 & \textit{Producer} & \texttt{shared\_buffer = 3} \\ \hline
-			      2 & \textit{Producer} & \texttt{thread\_yield()} dipanggil --- CPU berpindah \\ \hline
+			      2 & \textit{Producer} & \texttt{thread\_yield()} dipanggil, CPU berpindah \\ \hline
 			      3 & \textit{Consumer} & \textit{[Isi jawaban di sini]} \\ \hline
 			      4 & \textit{Consumer} & \textit{[Isi jawaban di sini]} \\ \hline
 			      5 & \textit{Producer} & \textit{[Isi jawaban di sini]} \\ \hline
@@ -443,7 +442,7 @@ make run
 \end{enumerate}
 
 % ============================================================
-\subsection{Sesi 2 — Implementasi \textit{Semaphore}}
+\subsection{Sesi 2: Implementasi \textit{Semaphore}}
 % ============================================================
 
 \subsubsection{Struktur \textit{Semaphore} pada implementasi OS}
@@ -513,7 +512,7 @@ void sema_up(struct semaphore *sema) {
 \end{enumerate}
 
 % ============================================================
-\subsection{Sesi 3 — Implementasi \textit{Lock} dan Integrasi Kernel}
+\subsection{Sesi 3: Implementasi \textit{Lock} dan Integrasi Kernel}
 % ============================================================
 
 \subsubsection{Implementasi lock\_acquire() dan lock\_release()}
@@ -599,7 +598,7 @@ static void producer(void *aux) {
 \end{enumerate}
 
 % ============================================================
-\subsection{Sesi 4 — Kompilasi dan Verifikasi Sistem}
+\subsection{Sesi 4: Kompilasi dan Verifikasi Sistem}
 % ============================================================
 
 \begin{enumerate}
@@ -764,8 +763,8 @@ make clean && make DEMO=-DSYNCHRONIZATION && make run
 				            3 & \textit{Consumer}
 				            & Mendapat giliran CPU; \texttt{sema\_down(\&sema\_full)} berhasil. \\ \hline
 				            4 & \textit{Consumer}
-				            & \texttt{lock\_acquire(\&buf\_lock)} dipanggil --- \textit{[Isi jawaban di sini]} \\ \hline
-				            5 & ---
+				            & \texttt{lock\_acquire(\&buf\_lock)} dipanggil. \textit{[Isi jawaban di sini]} \\ \hline
+				            5 & \textendash{}
 				            & \textit{[Jelaskan mengapa tidak ada thread yang dapat melanjutkan]} \\ \hline
 			            \end{tabulary}
 		            \end{table}

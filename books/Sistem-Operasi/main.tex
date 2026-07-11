@@ -1,4 +1,4 @@
-\documentclass[10pt,a5paper,openright]{report}
+\documentclass[10pt,a5paper,openany]{report}
 \usepackage{config}
 
 \pagestyle{main}
@@ -8,36 +8,7 @@
 \begin{document}
 
 % ===== HALAMAN SAMPUL =====
-\thispagestyle{empty}
-\newgeometry{margin=0cm}
-\begin{tikzpicture}[remember picture, overlay]
-    % --- Top accent bar ---
-    \fill[accentdark] (current page.north west) rectangle
-        ([yshift=-3.5cm]current page.north east);
-    % --- Logo ---
-    \node[anchor=center] at ([yshift=-1.75cm]current page.north)
-        {\includegraphics[scale=0.15]{Figure/ifitera-header.png}};
-\end{tikzpicture}
-\begin{center}
-    \vspace*{4cm}
-    {\color{accentdark}\fontsize{27}{32}\selectfont\bfseries\bookTitle{}}\\[1.2cm]
-    {\color{accent}\rule{0.35\textwidth}{2pt}}\\[1.2cm]
-    {\color{textsec}\small
-        Ahmat Prayoga Sembiring \textperiodcentered{} Andryano Shevchenko Limbong\\[4pt]
-        Aziz Kurniawan \textperiodcentered{} Dito Rifki Irawan\\[4pt]
-        Ebentua Philippus Limbong \textperiodcentered{} Eko Dwi Nugroho\\[4pt]
-        Elsa Elisa Yohana Sianturi \textperiodcentered{} Fathan Andi Kartagama\\[4pt]
-        I Wayan Wiprayoga Wisesa \textperiodcentered{} Ilham Firman Ashari\\[4pt]
-        Martin Clinton Tosima Manullang \textperiodcentered{} Miftahul Khoiriyah\\[4pt]
-        Muhammad Bintang Al-Fasya \textperiodcentered{} Muhammad Fadhil Zurani\\[4pt]
-        Reza Chairul Manam \textperiodcentered{} Stevanus Cahya Anggara\\[4pt]
-        Varasina Farmadani \textperiodcentered{} Zakhi Algifari
-    }\\[1.6cm]
-    \vfill
-    {\color{textsec}\small\textcopyright{} \the\year{} --- \institution{}}\\[1.5cm]
-\end{center}
-\restoregeometry
-\newpage
+\includepdf[pages=1,noautoscale]{Figure/cover-front.pdf}
 
 % ===== KATA PENGANTAR =====
 \thispagestyle{empty}
@@ -72,28 +43,28 @@ Bagian ini mencantumkan kontribusi masing-masing individu dalam penyusunan buku 
 
 \subsection*{Penulis}
 \begin{itemize}[label=]
-    \item Ahmat Prayoga Sembiring
-    \item Andryano Shevchenko Limbong
-    \item Aziz Kurniawan
-    \item Dito Rifki Irawan
-    \item Ebentua Philippus Limbong
-    \item Elsa Elisa Yohana Sianturi
-    \item Fathan Andi Kartagama
-    \item Miftahul Khoiriyah
-    \item Muhammad Bintang Al-Fasya
-    \item Muhammad Fadhil Zurani
-    \item Reza Chairul Manam
-    \item Stevanus Cahya Anggara
-    \item Varasina Farmadani
-    \item Zakhi Algifari
+	\item Ahmat Prayoga Sembiring
+	\item Andryano Shevchenko Limbong
+	\item Aziz Kurniawan
+	\item Dito Rifki Irawan
+	\item Ebentua Philippus Limbong
+	\item Elsa Elisa Yohana Sianturi
+	\item Fathan Andi Kartagama
+	\item Miftahul Khoiriyah
+	\item Muhammad Bintang Al-Fasya
+	\item Muhammad Fadhil Zurani
+	\item Reza Chairul Manam
+	\item Stevanus Cahya Anggara
+	\item Varasina Farmadani
+	\item Zakhi Algifari
 \end{itemize}
 
 \subsection*{Editor dan Proofreader}
 \begin{itemize}[label=]
-    \item Eko Dwi Nugroho
-    \item I Wayan Wiprayoga Wisesa
-    \item Ilham Firman Ashari
-    \item Martin Clinton Tosima Manullang
+	\item Eko Dwi Nugroho
+	\item I Wayan Wiprayoga Wisesa
+	\item Ilham Firman Ashari
+	\item Martin Clinton Tosima Manullang
 \end{itemize}
 
 
@@ -103,5 +74,9 @@ Bagian ini mencantumkan kontribusi masing-masing individu dalam penyusunan buku 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{IEEEtran}
 \bibliography{Referensi}
+
+% ===== HALAMAN BELAKANG =====
+\cleardoublepage
+\includepdf[pages=1,noautoscale]{Figure/cover-back.pdf}
 
 \end{document}

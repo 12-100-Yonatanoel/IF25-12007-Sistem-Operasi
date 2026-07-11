@@ -172,7 +172,7 @@ nano Makefile
 program-halo: hello.c
 	gcc hello.c -o program-halo
     \end{lstlisting}
-	      \textit{Simpan file ini (Ctrl+O, Enter) dan kelur dari nano (Ctrl+X).}
+	      \textit{Simpan file ini (Ctrl+O, Enter) dan keluar dari nano (Ctrl+X).}
 
 	      \begin{figure}[H]
 		      \centering
@@ -361,42 +361,42 @@ ls
 Pada bagian ini, setiap mahasiswa wajib mengerjakan tugas praktik mandiri sebagai berikut:
 
 \begin{enumerate}
-    \item Buatlah sebuah direktori baru bernama \texttt{tugas-kalkulator} dan masuk ke dalamnya melalui terminal.
-    
-    \item Buat tiga buah file C menggunakan \texttt{nano}, yaitu:
-    \begin{itemize}
-        \item \texttt{kalkulator.h} yang berisi deklarasi fungsi \texttt{tambah(int a, int b)} dan \texttt{kurang(int a, int b)}.
-        \item \texttt{kalkulator.c} yang berisi implementasi dari kedua fungsi tersebut.
-        \item \texttt{utama.c} yang berisi fungsi \texttt{main()} untuk memanggil \texttt{tambah(10,5)} dan \texttt{kurang(10,5)} serta menampilkan hasilnya menggunakan \texttt{printf}. Pastikan menggunakan \texttt{\#include "kalkulator.h"}.
-    \end{itemize}
+	\item Buatlah sebuah direktori baru bernama \texttt{tugas-kalkulator} dan masuk ke dalamnya melalui terminal.
 
-    \item Tampilkan isi masing-masing file menggunakan perintah \texttt{cat} sebagai bentuk verifikasi.
+	\item Buat tiga buah file C menggunakan \texttt{nano}, yaitu:
+	      \begin{itemize}
+		      \item \texttt{kalkulator.h} yang berisi deklarasi fungsi \texttt{tambah(int a, int b)} dan \texttt{kurang(int a, int b)}.
+		      \item \texttt{kalkulator.c} yang berisi implementasi dari kedua fungsi tersebut.
+		      \item \texttt{utama.c} yang berisi fungsi \texttt{main()} untuk memanggil \texttt{tambah(10,5)} dan \texttt{kurang(10,5)} serta menampilkan hasilnya menggunakan \texttt{printf}. Pastikan menggunakan \texttt{\#include "kalkulator.h"}.
+	      \end{itemize}
 
-    \item Lakukan proses kompilasi manual menggunakan \texttt{gcc} dengan tahapan berikut:
-    \begin{itemize}
-        \item Kompilasi \texttt{utama.c} dan \texttt{kalkulator.c} menjadi file objek (\texttt{.o}) menggunakan flag \texttt{-c}.
-        \item Gabungkan kedua file objek tersebut menjadi program \textit{executable} bernama \texttt{kalkulator-manual}.
-        \item Jalankan program tersebut untuk memastikan hasilnya benar.
-    \end{itemize}
+	\item Tampilkan isi masing-masing file menggunakan perintah \texttt{cat} sebagai bentuk verifikasi.
 
-    \item Hapus file objek dan file \textit{executable} yang telah dibuat menggunakan perintah \texttt{rm}.
+	\item Lakukan proses kompilasi manual menggunakan \texttt{gcc} dengan tahapan berikut:
+	      \begin{itemize}
+		      \item Kompilasi \texttt{utama.c} dan \texttt{kalkulator.c} menjadi file objek (\texttt{.o}) menggunakan flag \texttt{-c}.
+		      \item Gabungkan kedua file objek tersebut menjadi program \textit{executable} bernama \texttt{kalkulator-manual}.
+		      \item Jalankan program tersebut untuk memastikan hasilnya benar.
+	      \end{itemize}
 
-    \item Buat sebuah file \texttt{Makefile} untuk mengotomatisasi proses kompilasi dengan ketentuan:
-    \begin{itemize}
-        \item Menggunakan variabel \texttt{CC = gcc}.
-        \item Menggunakan variabel \texttt{CFLAGS = -Wall}.
-        \item Memiliki target utama \texttt{kalkulator-otomatis}.
-        \item Memiliki target \texttt{clean} untuk menghapus file \texttt{.o} dan \textit{executable}.
-    \end{itemize}
+	\item Hapus file objek dan file \textit{executable} yang telah dibuat menggunakan perintah \texttt{rm}.
 
-    \item Jalankan perintah \texttt{make} untuk melakukan kompilasi otomatis, kemudian jalankan program yang dihasilkan.
+	\item Buat sebuah file \texttt{Makefile} untuk mengotomatisasi proses kompilasi dengan ketentuan:
+	      \begin{itemize}
+		      \item Menggunakan variabel \texttt{CC = gcc}.
+		      \item Menggunakan variabel \texttt{CFLAGS = -Wall}.
+		      \item Memiliki target utama \texttt{kalkulator-otomatis}.
+		      \item Memiliki target \texttt{clean} untuk menghapus file \texttt{.o} dan \textit{executable}.
+	      \end{itemize}
 
-    \item Jalankan perintah \texttt{make clean} dan verifikasi bahwa direktori kembali bersih menggunakan \texttt{ls}.
+	\item Jalankan perintah \texttt{make} untuk melakukan kompilasi otomatis, kemudian jalankan program yang dihasilkan.
 
-    \item Dokumentasikan setiap langkah dan perintah eksekusi terminal secara berurutan (wajib disertai bukti seperti tangkapan layar).
+	\item Jalankan perintah \texttt{make clean} dan verifikasi bahwa direktori kembali bersih menggunakan \texttt{ls}.
 
-    \item Susun laporan praktikum sesuai template resmi pada GitHub IF ITERA:
-    \url{https://github.com/informatika-itera/IF25-12007-Sistem-Operasi/tree/main/Hands-On}
+	\item Dokumentasikan setiap langkah dan perintah eksekusi terminal secara berurutan (wajib disertai bukti seperti tangkapan layar).
+
+	\item Susun laporan praktikum sesuai template resmi pada GitHub IF ITERA:
+	      \url{https://github.com/informatika-itera/IF25-12007-Sistem-Operasi/tree/main/Hands-On}
 \end{enumerate}
 
 Laporan \textbf{wajib} disusun menggunakan \LaTeX.

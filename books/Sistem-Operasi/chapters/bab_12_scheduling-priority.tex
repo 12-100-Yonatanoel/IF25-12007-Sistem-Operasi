@@ -5,8 +5,6 @@
 \chapter{Penjadwalan Proses Berbasis Prioritas}
 \label{chap:modul-12}
 
-\sloppy
-
 % --- 1. Tujuan dan Output Praktikum ---
 \section{Tujuan dan Output Praktikum}
 
@@ -113,9 +111,9 @@ Berikut skenario terjadinya \textit{starvation} langkah demi langkah:
 		\hline
 		\textbf{Langkah} & \textbf{Thread Aktif} & \textbf{Yang Terjadi} \\ \hline
 		1 & High (pri=50) & Dipilih scheduler, berjalan, memanggil \texttt{yield()} \\ \hline
-		2 & --- & Scheduler memindai antrean: Low(10), Med(31), High(50) \\ \hline
+		2 & - & Scheduler memindai antrean: Low(10), Med(31), High(50) \\ \hline
 		3 & High (pri=50) & Dipilih lagi karena prioritas tertinggi \\ \hline
-		4 & --- & High terus dipilih berulang kali \\ \hline
+		4 & - & High terus dipilih berulang kali \\ \hline
 		$\infty$ & Low (pri=10) & \textbf{Tidak pernah mendapat giliran} = \textit{starvation} \\ \hline
 	\end{tabulary}
 \end{table}
@@ -365,7 +363,7 @@ Demo Minggu 6: Priority Scheduling
 Kerjakan tugas-tugas berikut secara berurutan mengikuti alur sesi pada Modul 11 dan Modul 12. Sertakan bukti berupa tangkapan layar (\textit{screenshot}) QEMU atau penggalan kode yang relevan pada setiap langkah yang diminta.
 
 % ============================================================
-\subsection{Sesi 1 — Mengamati Perilaku Round-Robin}
+\subsection{Sesi 1: Mengamati Perilaku Round-Robin}
 % ============================================================
 
 \subsubsection{Persiapan dan Kompilasi}
@@ -429,7 +427,7 @@ make run
 \end{enumerate}
 
 % ============================================================
-\subsection{Sesi 2 — Implementasi Priority Scheduling}
+\subsection{Sesi 2: Implementasi Priority Scheduling}
 % ============================================================
 
 \subsubsection{Analisis Kode yang Akan Dirombak}
@@ -484,7 +482,7 @@ struct thread *next_thread_to_run(void) {
 \end{enumerate}
 
 % ============================================================
-\subsection{Sesi 3 — Kompilasi dan Verifikasi}
+\subsection{Sesi 3: Kompilasi dan Verifikasi}
 % ============================================================
 
 \begin{enumerate}
@@ -579,5 +577,3 @@ make clean && make DEMO=-DPRIORITY_SCHEDULING && make run
 	      \end{enumerate}
 
 \end{enumerate}
-
-\fussy
