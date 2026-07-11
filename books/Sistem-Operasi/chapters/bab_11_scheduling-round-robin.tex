@@ -210,7 +210,7 @@ Pada sesi ini, kita akan menjalankan sistem operasi dengan skenario demo yang me
 
 \textbf{Penting:} Flag \texttt{PRIORITY\_SCHEDULING} pada Makefile \textbf{hanya mengubah skenario demo} di \texttt{kernel.c}, yaitu membuat tiga \textit{thread} dengan prioritas berbeda (\texttt{Low}, \texttt{Med}, \texttt{High}). Flag ini \textbf{tidak} mengubah algoritma \textit{scheduler}. Algoritma \textit{scheduler} tetap ditentukan oleh implementasi fungsi \texttt{next\_thread\_to\_run()} di \texttt{thread.c}, yang saat ini masih berupa \textit{Round-Robin} (FIFO).
 
-Perhatikan bahwa pada file \texttt{kernel.c}, blok \texttt{\#elif defined(PRIORITY\_SCHEDULING)} membuat tiga \textit{thread} dengan prioritas \textbf{berbeda}:
+Perhatikan bahwa pada file \texttt{kernel.c}, blok \texttt{\#elif defined(\allowbreak PRIORITY\_SCHEDULING)} membuat tiga \textit{thread} dengan prioritas \textbf{berbeda}:
 
 \begin{lstlisting}[language=C, caption={Pembuatan thread dengan prioritas berbeda di kernel.c}]
 thread_create("Low",  10,          thread_func_generic, &args_low);
